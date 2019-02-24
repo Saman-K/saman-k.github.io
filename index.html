@@ -178,7 +178,7 @@
 										</div>
 										<div class="field">
 											<input id="entry.113279623" name="entry.113279623" type="checkbox"/>
-											<label for="entry.113279623">not spamming</label>
+											<label for="entry.113279623">Not Spamming</label>
 										</div>
 										<ul class="actions">
 											<li><input type="submit" value="Send" class="special" /></li>
@@ -189,13 +189,14 @@
                                     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) {}"></iframe>
                                     
                                     <script src="assets/js/jquery.min.js"></script>
-                                    <script type="text/javascript">var submitted=false;</script>
-                                    <script type="text/javascript">
+                                    <script type="text/javascript">var submitted=false;
                                         $('#gform').on('submit', function(e) {
-                                            $('#gform *').fadeOut(2000);
-                                            $('#gform').prepend('Your submission has been processed...');
+                                            $('#gform *').fadeOut(0);
+											
+											$('#gform').prepend('Your submission has been processed...');
                                         });                                        
                                     </script>
+									
                                     <p > <a href = 'mailto:SAMANKartist@gmail.com'>SAMANKartist@gmail.com</a></p>
 								</section>
 							</div>
