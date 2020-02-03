@@ -20,11 +20,11 @@
 
 		<!-- Header -->
 			<header id="header">
-				<a href="index.html" class="title">Saman.K</a>
+				<a href="index" class="title">Saman.K</a>
 				<nav>
 					<ul>
-						<li><a href="Code.html">Home</a></li>
-						<li><a href="MovieSK.html" class="active">Movie SK</a></li>
+						<li><a href="Code">Home</a></li>
+						<li><a href="MovieSK" class="active">Movie SK</a></li>
 					</ul>
 				</nav>
 			</header>
@@ -35,35 +35,31 @@
 				<!-- Main -->
 					<section id="main" class="wrapper">
 						<div class="inner">
-							<h1 class="major">Movie SK</h1>
-							<span class="image fit"><img src="code/images/pic04.jpg" alt="" /></span>
-							<p><span class="image left" ><img src="code/images/pic01.jpg" alt="" /></span> <h1></h1>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque .</p>
-							<p><span class="image right"><img src="code/images/pic02.jpg" alt="" /></span>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget. tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan eu faucibus. Integer ac pellentesque praesent tincidunt felis <pre><code>i = 0;
-
-while (!deck.isInOrder()) {
-print 'Iteration ' + i;
-deck.shuffle();
-i++;
-}
-print 'It took ' + i + ' iterations to sort the deck.';
+							<h1>Movie SK</h1>
+							<span class="image fit"><img src="code/images/MSK/1.png" alt="" /></span>
+							<p><span class="image left" ><img src="code/images/MSK/2.png" alt="" /></span><h1>About</h1>Movie SK is a database program. it has been designed to help with organizing a list of movies. Within the app, you can add a new listing, edit, delete and search among the existing listing. Movie SK has an export function which alas you to shear your list with your friends easily.</p><p> Under the View dropdown, there are four options. Edit, Search and Full mode will resizer and add or remove features for easier uses. And the last option under the view dropdown will tell you the number of movies in your database. </p>
+							<p><span class="image right"><img src="code/images/MSK/3.png" alt="" /></span><h2>Development</h2>I developed this app for personal use. I replaced my old method of storing my list which was on a .accdb(MS Access database) file. Movie SK is storing the list on .accdb file. for easier backup and use without the application.  After I build Movie SK I stoped collecting movies. But the final version is stable and ready to be used.</p>
+							<p>This code will be executed, when Export As (TXT) under the file dropdown pressed.
+							<pre><code>Private Sub ExTxt_Click(sender As Object, e As EventArgs) Handles ExTxt.Click
+	Dim Datename As String
+	Datename = Date.Now.ToString("HH.dd.MM.yy")
+	SaveFileDialogExport.FileName = ("Movie SK " & Datename)
+	SaveFileDialogExport.Filter = "txt files (*.txt)|*.txt"
+	SaveFileDialogExport.FilterIndex = 2
+	SaveFileDialogExport.RestoreDirectory = True
+	SaveFileDialogExport.ShowDialog()
+End Sub
 </code></pre></p>
 							<ul class="actions fit">
 								<li></li>
-								<li><a href="#" class="button fit">Download</a><p2>****</p2></li>
-								<li></li>
-							</ul>
-							<ul class="actions fit" class="menu">
-								<li></li>
-								<li>********</li>
+								<li><a href="#" class="button fit">Download</a><p2>Movie SK has reached the end of its life and no longer will be developed.</p2></li>
 								<li></li>
 							</ul>
 							<div class="row gtr-uniform">
-							<div class="col-4"><span class="image fit"><img src="code/images/pic01.jpg" alt="" /></span></div>
-								<div class="col-4"><span class="image fit"><img src="code/images/pic02.jpg" alt="" /></span></div>
-								<div class="col-4"><span class="image fit"><img src="code/images/pic03.jpg" alt="" /></span></div>
-								<div class="col-4"><span class="image fit"><img src="code/images/pic03.jpg" alt="" /></span></div>
-								<div class="col-4"><span class="image fit"><img src="code/images/pic01.jpg" alt="" /></span></div>
-								<div class="col-4"><span class="image fit"><img src="code/images/pic02.jpg" alt="" /></span></div>
+								<div class="col-6"><span class="image fit"><img src="code/images/MSK/4.png" alt="" /><p>Help Window</p> </span></div>
+								<div class="col-6"><span class="image fit"><img src="code/images/MSK/5.png" alt="" /><p>Search view</p></span></div>
+								<div class="col-6"><span class="image fit"><img src="code/images/MSK/6.png" alt="" /><p>Export format</p></span></div>
+								<div class="col-6"><span class="image fit"><img src="code/images/MSK/7.png" alt="" /><p>Code (formating  of export file)</p></span></div>
 							</div>
 						</div>
 					</section>
@@ -74,7 +70,7 @@ print 'It took ' + i + ' iterations to sort the deck.';
 			<footer id="footer" class="wrapper alt">
 				<div class="inner">
 					<ul class="menu">
-						<li>&copy; <a href="index.html">Saman.K</a> 2020</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li>
+						<li>&copy; <a href="index">Saman.K</a> 2020</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li>
 					</ul>
 				</div>
 			</footer>

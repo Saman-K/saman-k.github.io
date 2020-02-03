@@ -38,9 +38,8 @@
 							<span class="image fit"><img src="code/images/SB/1.png" alt="" /></span>
 							<p></p>
 							<p><span class="image right" ><img src="code/images/SB/2.png" alt="" /></span> <h1>About</h1>Safety Break was made as an easier way to manage stretch break from the desk. which not only decreases the chances of work-related stress and RSI injuries, also increases productivity and helps workers to step back and reorganize thoughts. by decreasing the number of injury workers you will achieve an overall happier workplace witch will increase better long term productivity.</p><p>SB was made for fast and easy use. the setting tab is an easy way to optimizes the options to suit your workflow, by changing the number of rounds you can plan your upcoming hours.</p>
-							<p><span class="image left"><img src="code/images/SB/3.png" alt="" /></span>This is code to display a live countdown of the break in the break popups.</p><pre><code>'--------------------------------------------------------------------------- timer
-'TReferash
-Private Sub TReferash_Tick(sender As Object, e As EventArgs) Handles TReferash.Tick
+							<p><span class="image left"><img src="code/images/SB/3.png" alt="" /></span></p>
+								<p>This is code to display a live countdown of the break in the break popups.<pre><code>Private Sub TReferash_Tick(sender As Object, e As EventArgs) Handles TReferash.Tick
 	If SafetyBreak.WorkT >= 60 Then
 	LLWorkT.Text = Fix(SafetyBreak.WorkT \ 60) & " Min"
 	ElseIf SafetyBreak.WorkT > 1 Then
@@ -49,7 +48,7 @@ Private Sub TReferash_Tick(sender As Object, e As EventArgs) Handles TReferash.T
 	LLWorkT.Text = "Ended"
 	Me.Close()
 	End If
-End Sub</code></pre> 
+End Sub</code></pre></p>
 							<p>The Safety break is a complete app that is ready to be used for personal use. SB was developed with VB.NET. the development of this project will be continued in other languages and platforms.</p>
 							<!--<ul class="actions fit">
 								<li></li>
@@ -61,11 +60,12 @@ End Sub</code></pre>
 								<li>This is a stable version last update 02/01/2020.</li>
 								<li></li>
 							</ul>-->
+							<h1>Photos</h1>
 							<div class="row gtr-uniform">
-								<div class="col-6"><span class="image fit"><img src="code/images/SB/8.png" alt="" /></span></div>
-								<div class="col-6"><span class="image fit"><img src="code/images/SB/9.png" alt="" /></span></div>
-								<div class="col-6"><span class="image fit"><img src="code/images/SB/6.png" alt="" /></span></div>
-								<div class="col-6"><span class="image fit"><img src="code/images/SB/5.png" alt="" /></span></div>
+								<div class="col-6"><span class="image fit"><img src="code/images/SB/8.png" alt="" /><p>Start and Stop button after click</p> </span></div>
+								<div class="col-6"><span class="image fit"><img src="code/images/SB/5.png" alt="" /><p>Break timer popup window </p></span></div>
+								<div class="col-6"><span class="image fit"><img src="code/images/SB/6.png" alt="" /><p>5 minutes, before break warning  window</p> </span></div>
+								<div class="col-6"><span class="image fit"><img src="code/images/SB/7.png" alt="" /><p>Layout design preview</p> </span></div>
 							</div>
 						</div>
 					</section>
