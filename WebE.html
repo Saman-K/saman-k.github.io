@@ -35,6 +35,7 @@
 							<h1>Web Expelorer</h1>
 							<div class="col-8"><span class="image fit"><img src="code/images/WE/1.png" alt="" /></span></div>
 							<p><span class="image left" ><img src="code/images/WE/2.png" alt="" /></span> <h1>About</h1>Web Explorer is a web browser with simple to use interface. Basic features include reload, go-back, go-forward and home button which will take you to your home page(can be set to any page you prefer in the settings). Furthermore in the setting dropdown(indicated with a gear icon). There are three options. Which are Remove Tab(short cut key[Ctrl+W]), New Tab(short cut key[Ctrl+T]) and Settings. The Settings will open up setting window, which can change the home page, default search engine and where you land after a new tab has been created.</p><p>Web Explorer was designed and developed using VB.net, by Saman.K with the help of online tutorials.</p>
+							<p>Web Explorer is at the final version and it will be developed no further. The browser engine has not been updated and it will not show some website.</p>
 							<p><span class="image right" ><img src="code/images/WE/3.png" alt="" /></span></p>
 <pre><code>try
 	WebControl1.Source = New Uri(SearchTB.Text)
@@ -45,8 +46,8 @@ Catch ex As System.UriFormatException
 		WebControl1.Source = New Uri("http://www." + SearchTB.Text)
 	End If
 End Try
-</code></pre><p>This code will run if an item in search has a top-level domain and it will add HTTP:// and WWW. to the search.</p>
-							<p>Web Explorer is at the final version and it will be developed no further. The browser engine has not been updated and it will not show some website.</p>
+</code></pre>
+							<p>This code will run if an item in search has a top-level domain and it will add HTTP:// and WWW. to the search.</p>
 							<!--<h2>Photo</h2>
 							<div class="row gtr-uniform">
 								<div class="col-4"><span class="image fit"><img src="code/images/pic01.jpg" alt="" /></span></div>
