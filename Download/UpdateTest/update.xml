@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Manifest version="1">
   <CheckInterval>900</CheckInterval>
-  <RemoteConfigUri>https://samank.me/Download/WorkerAnt/update.xml</RemoteConfigUri>
+  <RemoteConfigUri>https://samank.me/Download/UpdateTest/update.xml</RemoteConfigUri>
   <SecurityToken>4f6b0118-eed5-4b9e-8abd-69c02941a25f</SecurityToken>
-  <BaseUri>https://samank.me/Download/WorkerAnt/</BaseUri>
-  <Payload>WorkerAntInstaler[Date].zip</Payload>
+  <BaseUri>https://samank.me/Download/UpdateTest/</BaseUri>
+  <Payload>Updatetest2.zip</Payload>
 </Manifest>
