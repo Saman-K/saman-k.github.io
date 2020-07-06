@@ -1,8 +1,0 @@
-﻿<?xml version="2.0" encoding="utf-8" ?>
-<Manifest version="1">
-  <CheckInterval>3600</CheckInterval>
-  <RemoteConfigUri>https://samank.me/Download/Test/update.xml</RemoteConfigUri>
-  <SecurityToken>4f6b0118-eed5-4b9e-8abd-69c02941a25f</SecurityToken>
-  <BaseUri>https://samank.me/Download/Test/</BaseUri>
-  <Payload>Update.zip</Payload>
-</Manifest>
