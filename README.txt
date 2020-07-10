@@ -21,8 +21,8 @@ aj@lkn.io | @ajlkn
 
 Credits:
 
-	Demo Images:
-		Unsplash (unsplash.com)
+	Images:
+		© Saman.K 2020 (samank.me)
 
 	Icons:
 		Font Awesome (fontawesome.io)
