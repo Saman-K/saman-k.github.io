@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<title>Saman.K NotePad</title>
+		<link rel="shortcut icon" href="images/my%20head%2014.7x15%20icon%20XS.png"/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+
+		<meta name="p:domain_verify" content="c9f7afa5d3cb4f8aa3a61aa6548ac8e6"/>
+  <style>
+    body {
+      background-color: #222;
+      color: #ddd;
+      font-family: Arial, sans-serif;
+    }
+
+    #notepad {
+      position: absolute;
+      top: 40px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #333;
+      color: #fff;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      box-sizing: border-box;
+      resize: none;
+    }
+
+    #toolbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background-color: #444;
+      padding: 5px;
+      box-sizing: border-box;
+      align-items: center;
+      # justify-content: space-between;
+      display: flex;
+
+    }
+
+    #toolbar button {
+      margin-right: 5px;
+      border: none;
+      border-radius: 3px;
+      padding: 5px;
+      background-color: #555;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #samank-button {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #ffffff;
+    }
+
+    #samank-button img {
+      margin-left: 5px;
+    }
+
+    #samank-button:hover {
+      color: #ffd700;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <button onclick="toggleBold()">Bold</button>
+    <button onclick="toggleItalic()">Italic</button>
+    <button onclick="toggleUnderline()">Underline</button>
+    Font family:
+    <select id="fontFamilySelect" onchange="changeFontFamily()">
+      <option value="Arial">Arial</option>
+      <option value="Verdana">Verdana</option>
+      <option value="Courier New">Courier New</option>
+    </select>
+    Font size: <input type="number" id="fontSizeInput" value="16" min="8" max="72" onchange="changeFontSize()">
+    Color: <input type="color" id="fontColorInput" value="#000000" onchange="changeFontColor()">
+    <a href="https://samank.me/" target="_blank" rel="noopener noreferrer" id="samank-button">
+      <img src="https://samank.me/images/my%20head%2014.7x15%20icon%20XS.png" alt="Link to https://samank.me/" width="20" height="20">
+    </a>
+  </div>
+
+
+
+
+  <textarea id="notepad"></textarea>
+
+  <script>
+    // Get the notepad element
+    const notepad = document.getElementById("notepad");
+
+    // Load the saved text (if any) when the page loads
+    window.onload = function() {
+      const savedText = localStorage.getItem("notepadText");
+      if (savedText !== null) {
+        notepad.value = savedText;
+      }
+    };
+
+    // Save the text every 2 seconds
+    setInterval(function() {
+      const textToSave = notepad.value;
+      localStorage.setItem("notepadText", textToSave);
+    }, 2000);
+
+    // Font editing functions
+    function changeFontFamily() {
+      const fontFamilySelect = document.getElementById("fontFamilySelect");
+      const fontFamily = fontFamilySelect.value;
+      notepad.style.fontFamily = fontFamily;
+    }
+
+    function changeFontSize() {
+      const fontSizeInput = document.getElementById("fontSizeInput");
+      const fontSize = fontSizeInput.value + "px";
+      notepad.style.fontSize = fontSize;
+    }
+
+    function changeFontColor() {
+      const fontColorInput = document.getElementById("fontColorInput");
+      const fontColor = fontColorInput.value;
+      notepad.style.color = fontColor;
+    }
+
+    function toggleBold() {
+      const isBold = notepad.style.fontWeight === "bold";
+      notepad.style.fontWeight = isBold ? "normal" : "bold";
+    }
+
+    function toggleItalic() {
+      const isItalic = notepad.style.fontStyle === "italic";
+      notepad.style.fontStyle = isItalic ? "normal" : "italic";
+    }
+
+    function toggleUnderline() {
+      const isUnderline = notepad.style.textDecoration === "underline";
+      notepad.style.textDecoration = isUnderline ? "none" : "underline";
+    }
+  </script>
+</body>
+</html>
