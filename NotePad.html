@@ -189,9 +189,12 @@
 		}
 		document.getElementById(tabName).style.display = "block";
 		evt.currentTarget.className += " active";
+		document.getElementById(tabName + "Text").focus();
 	}
+	
 	// Set the default tab to be opened
 	document.getElementById("defaultOpen").click();
+
 
 	// Function to save the text in each text box when the page is unloaded
 	window.addEventListener("beforeunload", function () {
