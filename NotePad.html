@@ -152,6 +152,9 @@
 		<button class="tablinks" onclick="openTab(event, 'Tab1')" id="defaultOpen">Page 1</button>
 		<button class="tablinks" onclick="openTab(event, 'Tab2')">Page 2</button>
 		<button class="tablinks" onclick="openTab(event, 'Tab3')">Page 3</button>
+		<button class="tablinks" onclick="openTab(event, 'Tab4')">Page 4</button>
+		<button class="tablinks" onclick="openTab(event, 'Tab5')">Page 5</button>
+
 	</div>
 	<div class="tab-content">
 		<div id="Tab1" class="tabcontent">
@@ -162,6 +165,12 @@
 		</div>
 		<div id="Tab3" class="tabcontent">
 			<textarea id="Tab3Text"></textarea>
+		</div>
+		<div id="Tab4" class="tabcontent">
+			<textarea id="Tab4Text"></textarea>
+		</div>
+		<div id="Tab5" class="tabcontent">
+			<textarea id="Tab5Text"></textarea>
 		</div>
 	</div>
 	</div>
@@ -202,6 +211,9 @@
 		localStorage.setItem("Tab1Text", document.getElementById("Tab1Text").value);
 		localStorage.setItem("Tab2Text", document.getElementById("Tab2Text").value);
 		localStorage.setItem("Tab3Text", document.getElementById("Tab3Text").value);
+		localStorage.setItem("Tab4Text", document.getElementById("Tab4Text").value);
+		localStorage.setItem("Tab5Text", document.getElementById("Tab5Text").value);
+
 	});
 
 	// Function to restore the text in each text box when the page is loaded
@@ -209,6 +221,8 @@
 		document.getElementById("Tab1Text").value = localStorage.getItem("Tab1Text") || "";
 		document.getElementById("Tab2Text").value = localStorage.getItem("Tab2Text") || "";
 		document.getElementById("Tab3Text").value = localStorage.getItem("Tab3Text") || "";
+		document.getElementById("Tab4Text").value = localStorage.getItem("Tab4Text") || "";
+		document.getElementById("Tab5Text").value = localStorage.getItem("Tab5Text") || "";
 	});
 
 
