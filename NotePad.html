@@ -1,113 +1,166 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-		<title>Saman.K NotePad</title>
-		<link rel="shortcut icon" href="images/my%20head%2014.7x15%20icon%20XS.png"/>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<title>Saman.K NotePad</title>
+	<link rel="shortcut icon" href="images/my%20head%2014.7x15%20icon%20XS.png"/>
 
-		<meta name="p:domain_verify" content="c9f7afa5d3cb4f8aa3a61aa6548ac8e6"/>
-  <style>
-
-    body {
-      background-color: #222;
-      color: #ddd;
-      font-family: Arial, sans-serif;
-    }
+	<meta name="p:domain_verify" content="c9f7afa5d3cb4f8aa3a61aa6548ac8e6"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+			text-align: center;
+			background: #222222;
+			color: #eeeeee;
+        }
 
 		::selection {
-  		background-color: #ffd700;
-  		color: #222;
+  			background-color: #ffd700;
+  			color: #222;
 		}
 
-		.tab {
-			overflow: hidden;
-			position: absolute;
-			border: 5px;
-			left: 5px;
-			background-color: #222222;
-		}
-		.tab button {
-			background-color: inherit;
-			float: left;
-			border: none;
-			outline: none;
-			cursor: pointer;
-			padding: 10px ;
-			transition: 0.3s;
-			color: #ddd;
-		}
-		.tab button.active {
-			background-color: #333333;
-		}
-		.tabcontent {
-			display: none;
+
+
+        .tab-buttons {
+            display: flex;
 			padding: 5px;
-			border-top: none;
-		}
-
-.main {
-	position: absolute;
-	top: 52px;
-	bottom: 38px;
-	left: 10px;
-	right: 10px;
-}
-		textarea {
 			position: absolute;
-			top: 30px;
-			bottom: 0px;
-			left: 0px;
-			right: 0px;
-		  background-color: #333;
-		  color: #fff;
-		  padding: 15px;
-		  font-size: 16px;
-		  border: 5px;
-		  box-sizing: border-box;
-		  resize: none;
+			top: 40px;
+            gap: 8px;
+            margin-bottom: 10px;
+
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            border: none;
+            background: #bbbbbb;
+            cursor: pointer;
+        }
+
+        .tab-button.active {
+            background: #333333;
+            color: #eeeeee;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        textarea {
+			position: absolute;
+			top: 80px;
+			bottom: 30px;
+			left: 5px;
+			right: 5px;
+            box-sizing: border-box;
+			background: #333333;
+			color: #eeeeee;
+        }
+
+        .controls {
+			position: absolute;
+			top: 10px;
+			right: 20px;
+			left: 20px;
+
+        }
+
+        /* Custom Dropdown Styles */
+        .custom-select select {
+            height: 22px;
+            width: 100px;
+            border: 1px solid #404040;
+            border-radius: 2px;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 4px;
+            /* Remove default appearance */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            /* Add custom arrow */
+            background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='8' viewBox='0 0 24 24' width='8' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 4px center;
+        }
+
+        .custom-select select:hover {
+            border-color: #505050;
+        }
+
+        .custom-select select:focus {
+            outline: none;
+            border-color: #eeeeee;
 		}
 
-    #toolbar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 40px;
-      background-color: #444;
-      padding: 5px;
-      box-sizing: border-box;
-      align-items: center;
-      # justify-content: space-between;
-      display: flex;
+        /* Font Size Selector Styles */
+		.font-selector {
+            align-items: center;
+            gap: 4px;
+        }
 
-    }
+        .font-selector button:hover {
+            background-color: #2a2a2a;
+            border-color: #505050;
+        }
 
-    #toolbar button {
-      margin-right: 5px;
-      border: none;
-      border-radius: 3px;
-      padding: 5px;
-      background-color: #555;
-      color: #fff;
-      font-size: 14px;
-      cursor: pointer;
-    }
+        .font-selector input {
+            height: 22px;
+            width: 60px;
+            text-align: center;
+            border: 1px solid #404040;
+            border-radius: 2px;
+            padding: 0 2px;
+            font-size: 14px;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            box-sizing: border-box;
+        }
 
-    #samank-button {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-      color: #ffffff;
-    }
 
-    #samank-button img {
-      margin-left: 5px;
-    }
+        .controls label {
 
-    #samank-button:hover {
-      color: #ffd700;
-    }
+        }
+
+        select, input {
+            margin-right: 20px;
+        }
+
+		#toolbar {
+			background-color: #444;
+			position: absolute;
+			height: 40px;
+			top: 0px;
+			right: 0px;
+			left: 0px;
+
+			padding: 5px;
+			border: 0px;
+			
+			box-sizing: border-box;
+			align-items: center;
+			# justify-content: space-between;
+		}
+
+
+		#samank-button {
+			display: flex;
+			align-items: center;
+			text-decoration: none;
+			color: #ffffff;
+		}
+
+		#samank-button img {
+			margin-left: 5px;
+		}
 
 		#footer {
 			position: fixed;
@@ -125,165 +178,216 @@
 		#footer a {
   		color: #eee;
 		}
-
-  </style>
+    </style>
 </head>
 <body>
-  <div id="toolbar">
+	<div id="toolbar">
 		<a href="index" rel="noopener noreferrer" id="samank-button">
 			<img src="images/my%20head%2014.7x15%20icon%20XS.png" width="20" height="20">
 		</a>
-		<a style="color: #444;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-    <!--<button onclick="toggleBold()">Bold</button>
-    <button onclick="toggleItalic()">Italic</button>
-    <button onclick="toggleUnderline()">Underline</button>
-    &nbsp;Font family:&nbsp;
-    <select id="fontFamilySelect" onchange="changeFontFamily()">
-      <option value="Arial">Arial</option>
-      <option value="Verdana">Verdana</option>
-      <option value="Courier New">Courier New</option>
-    </select>
-    &nbsp;&nbsp;Font size:&nbsp;<input type="number" id="fontSizeInput" value="16" min="8" max="72" onchange="changeFontSize()">
-    &nbsp;&nbsp;Color:&nbsp;<input type="color" id="fontColorInput" value="#000000" onchange="changeFontColor()">-->
-  </div>
+		<div class="controls">
 
-<div class="main">
-	<div class="tab">
-		<button class="tablinks" onclick="openTab(event, 'Tab1')" id="defaultOpen">Page 1</button>
-		<button class="tablinks" onclick="openTab(event, 'Tab2')">Page 2</button>
-		<button class="tablinks" onclick="openTab(event, 'Tab3')">Page 3</button>
-		<button class="tablinks" onclick="openTab(event, 'Tab4')">Page 4</button>
-		<button class="tablinks" onclick="openTab(event, 'Tab5')">Page 5</button>
-
-	</div>
-	<div class="tab-content">
-		<div id="Tab1" class="tabcontent">
-			<textarea id="Tab1Text"></textarea>
-		</div>
-		<div id="Tab2" class="tabcontent">
-			<textarea id="Tab2Text"></textarea>
-		</div>
-		<div id="Tab3" class="tabcontent">
-			<textarea id="Tab3Text"></textarea>
-		</div>
-		<div id="Tab4" class="tabcontent">
-			<textarea id="Tab4Text"></textarea>
-		</div>
-		<div id="Tab5" class="tabcontent">
-			<textarea id="Tab5Text"></textarea>
+			<label class="font-selector">
+				Font Size:
+				<input type="number" id="fontSize" min="8" max="2000" value="16">
+			</label>
+			<label class="custom-select">
+				Family:
+				<select  id="fontFamily">
+					<option value="Arial">Arial</option>
+					<!-- <option value="Times New Roman">Times New Roman</option> -->
+					<option value="Courier New">Courier New</option>
+					<option value="Georgia">Georgia</option>
+					<!-- <option value="OpenDyslexic">OpenDyslexic</option> -->
+					<!-- <option value="Verdana">Verdana</option> -->
+				</select>
+			</label>
 		</div>
 	</div>
-	</div>
 
 
- <!--<textarea id="notepad" onkeydown="preventTab(event)"></textarea>-->
+    <div class="tab-buttons">
+        <div class="tab-button active" data-tab="1">
+            <span class="edit-name">Tab 1</span>
+        </div>
+        <div class="tab-button" data-tab="2">
+            <span class="edit-name">Tab 2</span>
+        </div>
+        <div class="tab-button" data-tab="3">
+            <span class="edit-name">Tab 3</span>
+        </div>
+        <div class="tab-button" data-tab="4">
+            <span class="edit-name">Tab 4</span>
+        </div>
+        <div class="tab-button" data-tab="5">
+            <span class="edit-name">Tab 5</span>
+        </div>
+        <div class="tab-button" data-tab="6">
+            <span class="edit-name">Tab 6</span>
+        </div>
+        <div class="tab-button" data-tab="7">
+            <span class="edit-name">Tab 7</span>
+        </div>
+        <div class="tab-button" data-tab="8">
+            <span class="edit-name">Tab 8</span>
+        </div>
+    </div>
+    
+    <div class="tab-content active" data-tab="1">
+        <textarea id="text1"></textarea>
+    </div>
+    <div class="tab-content" data-tab="2">
+        <textarea id="text2"></textarea>
+    </div>
+    <div class="tab-content" data-tab="3">
+        <textarea id="text3"></textarea>
+    </div>
+    <div class="tab-content" data-tab="4">
+        <textarea id="text4"></textarea>
+    </div>
+    <div class="tab-content" data-tab="5">
+        <textarea id="text5"></textarea>
+    </div>
+    <div class="tab-content" data-tab="6">
+        <textarea id="text6"></textarea>
+    </div>
+    <div class="tab-content" data-tab="7">
+        <textarea id="text7"></textarea>
+    </div>
+    <div class="tab-content" data-tab="8">
+        <textarea id="text8"></textarea>
+    </div>
+    <script>
+        // Initialize settings from localStorage or set defaults
+        const settings = {
+            fontSize: localStorage.getItem('fontSize') || 16,
+            fontFamily: localStorage.getItem('fontFamily') || 'Arial'
+        };
 
-  <script>
+        // Initialize text content from localStorage
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach((textarea, index) => {
+            textarea.value = localStorage.getItem(`text${index + 1}`) || '';
+        });
 
-	// Get the tabs and tab content elements
-	var tabs = document.getElementsByClassName("tablinks");
-	var tabContents = document.getElementsByClassName("tabcontent");
-	// Set the active tab
-	document.getElementById("Tab1").style.display = "block";
+        // Apply initial settings
+        document.getElementById('fontSize').value = settings.fontSize;
+        document.getElementById('fontFamily').value = settings.fontFamily;
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTabNames();
+            setupTabRenaming();
+            setupTabSwitching();
+        });
 
-	function openTab(evt, tabName) {
-		var i, tabcontent, tablinks;
-		tabcontent = document.getElementsByClassName("tabcontent");
-		for (i = 0; i < tabcontent.length; i++) {
-			tabcontent[i].style.display = "none";
-		}
-		tablinks = document.getElementsByClassName("tablinks");
-		for (i = 0; i < tablinks.length; i++) {
-			tablinks[i].className = tablinks[i].className.replace(" active", "");
-		}
-		document.getElementById(tabName).style.display = "block";
-		evt.currentTarget.className += " active";
-		document.getElementById(tabName + "Text").focus();
-	}
-	
-	// Set the default tab to be opened
-	document.getElementById("defaultOpen").click();
+        function loadTabNames() {
+            const savedNames = JSON.parse(localStorage.getItem('tabNames') || '{}');
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                const tabId = tab.dataset.tab;
+                if (savedNames[tabId]) {
+                    tab.querySelector('.edit-name').textContent = savedNames[tabId];
+                }
+            });
+        }
 
+        function setupTabRenaming() {
+            document.querySelectorAll('.edit-name').forEach(nameElement => {
+                // Remove previous event listeners if any
+                const newElement = nameElement.cloneNode(true);
+                nameElement.parentNode.replaceChild(newElement, nameElement);
+                
+                // Add double click event listener
+                newElement.addEventListener('dblclick', (e) => {
+                    e.stopPropagation(); // Prevent tab switching on double click
+                    const currentName = e.target.textContent;
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = currentName;
+                    input.className = 'name-input';
+                    
+                    const tab = e.target.closest('.tab-button');
+                    const tabId = tab.dataset.tab;
+                    
+                    input.addEventListener('blur', () => {
+                        finishRenaming(input, tabId);
+                    });
+                    
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            finishRenaming(input, tabId);
+                        }
+                    });
+                    
+                    e.target.replaceWith(input);
+                    input.focus();
+                    input.select();
+                });
+            });
+        }
+        applyStyles();
 
-	// Function to save the text in each text box when the page is unloaded
-	window.addEventListener("beforeunload", function () {
-		// Save the last used tab as the default tab
-		localStorage.setItem("Tab1Text", document.getElementById("Tab1Text").value);
-		localStorage.setItem("Tab2Text", document.getElementById("Tab2Text").value);
-		localStorage.setItem("Tab3Text", document.getElementById("Tab3Text").value);
-		localStorage.setItem("Tab4Text", document.getElementById("Tab4Text").value);
-		localStorage.setItem("Tab5Text", document.getElementById("Tab5Text").value);
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active tab button
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
 
-	});
+                // Update active tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.querySelector(`.tab-content[data-tab="${button.dataset.tab}"]`).classList.add('active');
+            });
+        });
 
-	// Function to restore the text in each text box when the page is loaded
-	window.addEventListener("load", function () {
-		document.getElementById("Tab1Text").value = localStorage.getItem("Tab1Text") || "";
-		document.getElementById("Tab2Text").value = localStorage.getItem("Tab2Text") || "";
-		document.getElementById("Tab3Text").value = localStorage.getItem("Tab3Text") || "";
-		document.getElementById("Tab4Text").value = localStorage.getItem("Tab4Text") || "";
-		document.getElementById("Tab5Text").value = localStorage.getItem("Tab5Text") || "";
-	});
+        // Save text content on input
+        textareas.forEach((textarea, index) => {
+            textarea.addEventListener('input', () => {
+                localStorage.setItem(`text${index + 1}`, textarea.value);
+            });
+        });
 
+        function finishRenaming(input, tabId) {
+            const newName = input.value.trim() || `Tab ${tabId}`;
+            const span = document.createElement('span');
+            span.className = 'edit-name';
+            span.textContent = newName;
+            input.replaceWith(span);
+            
+            // Save to localStorage
+            const savedNames = JSON.parse(localStorage.getItem('tabNames') || '{}');
+            savedNames[tabId] = newName;
+            localStorage.setItem('tabNames', JSON.stringify(savedNames));
+            
+            // Reattach click event
+            setupTabRenaming();
+        }
 
+        // Font size control
+        document.getElementById('fontSize').addEventListener('change', (e) => {
+            settings.fontSize = e.target.value;
+            localStorage.setItem('fontSize', settings.fontSize);
+            applyStyles();
+        });
 
-    // Get the notepad element
-    const notepad = document.getElementById("notepad");
+        // Font family control
+        document.getElementById('fontFamily').addEventListener('change', (e) => {
+            settings.fontFamily = e.target.value;
+            localStorage.setItem('fontFamily', settings.fontFamily);
+            applyStyles();
+        });
 
-
-
-    // Font editing functions-------------
-    function changeFontFamily() {
-      const fontFamilySelect = document.getElementById("fontFamilySelect");
-      const fontFamily = fontFamilySelect.value;
-      notepad.style.fontFamily = fontFamily;
-    }
-
-    function changeFontSize() {
-      const fontSizeInput = document.getElementById("fontSizeInput");
-      const fontSize = fontSizeInput.value + "px";
-      notepad.style.fontSize = fontSize;
-    }
-
-    function changeFontColor() {
-      const fontColorInput = document.getElementById("fontColorInput");
-      const fontColor = fontColorInput.value;
-      notepad.style.color = fontColor;
-    }
-
-    function toggleBold() {
-      const isBold = notepad.style.fontWeight === "bold";
-      notepad.style.fontWeight = isBold ? "normal" : "bold";
-    }
-
-    function toggleItalic() {
-      const isItalic = notepad.style.fontStyle === "italic";
-      notepad.style.fontStyle = isItalic ? "normal" : "italic";
-    }
-
-		function toggleUnderline() {
-      const isUnderline = notepad.style.textDecoration === "underline";
-      notepad.style.textDecoration = isUnderline ? "none" : "underline";
-    }
-
-		const textarea = document.querySelector('textarea');
-
-		textarea.addEventListener('keydown', function(event) {
-		  if (event.key === 'Tab') {
-		    event.preventDefault();
-		    const start = this.selectionStart;
-		    const end = this.selectionEnd;
-		    const value = this.value;
-		    // Insert either a tab or a space character at the current cursor position
-		    const newValue = value.substring(0, start) + '\t' + value.substring(end);
-		    this.value = newValue;
-		    // Move the cursor to the position after the inserted character
-		    this.selectionStart = this.selectionEnd = start + 1;
-		  }
-		});
-  </script>
+        // Apply styles to all textareas
+        function applyStyles() {
+            textareas.forEach(textarea => {
+                textarea.style.fontSize = `${settings.fontSize}px`;
+                textarea.style.fontFamily = settings.fontFamily;
+            });
+        }
+    </script>
 </body>
-
 <footer id="footer">
 	<span class="copyright">&copy; <a href="index">Saman.K</a></span>
 </footer>
