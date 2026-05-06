@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 533">
+  <defs>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.50)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.20)"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="533" fill="#222222"/>
+
+  <!-- TrueNAS label -->
+  <text x="260" y="112" font-family="monospace" font-size="11" fill="rgba(255,255,255,0.28)" letter-spacing="2">TRUENAS  ·  ZFS  raidz1</text>
+
+  <!-- Drive bays -->
+  <!-- Drive 1 -->
+  <rect x="200" y="128" width="68" height="200" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" stroke-width="1.2"/>
+  <rect x="212" y="140" width="44" height="6" rx="2" fill="rgba(255,255,255,0.07)"/>
+  <rect x="212" y="152" width="44" height="6" rx="2" fill="rgba(255,255,255,0.07)"/>
+  <rect x="212" y="164" width="44" height="6" rx="2" fill="rgba(255,255,255,0.07)"/>
+  <rect x="212" y="176" width="44" height="6" rx="2" fill="rgba(255,255,255,0.04)"/>
+  <text x="234" y="248" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.28)">10 TB</text>
+  <circle cx="234" cy="308" r="4" fill="rgba(80,200,120,0.70)"/>
+
+  <!-- Drive 2 -->
+  <rect x="278" y="128" width="68" height="200" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" stroke-width="1.2"/>
+  <rect x="290" y="140" width="44" height="6" rx="2" fill="rgba(255,255,255,0.07)"/>
+  <rect x="290" y="152" width="44" height="6" rx="2" fill="rgba(255,255,255,0.07)"/>
+  <rect x="290" y="164" width="44" height="6" rx="2" fill="rgba(255,255,255,0.07)"/>
+  <rect x="290" y="176" width="44" height="6" rx="2" fill="rgba(255,255,255,0.04)"/>
+  <text x="312" y="248" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.28)">10 TB</text>
+  <circle cx="312" cy="308" r="4" fill="rgba(80,200,120,0.70)"/>
+
+  <!-- Drive 3 -->
+  <rect x="356" y="128" width="68" height="200" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" stroke-width="1.2"/>
+  <rect x="368" y="140" width="44" height="6" rx="2" fill="rgba(255,255,255,0.07)"/>
+  <rect x="368" y="152" width="44" height="6" rx="2" fill="rgba(255,255,255,0.07)"/>
+  <rect x="368" y="164" width="44" height="6" rx="2" fill="rgba(255,255,255,0.07)"/>
+  <rect x="368" y="176" width="44" height="6" rx="2" fill="rgba(255,255,255,0.04)"/>
+  <text x="390" y="248" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.28)">10 TB</text>
+  <circle cx="390" cy="308" r="4" fill="rgba(80,200,120,0.70)"/>
+
+  <!-- Pool usage bar -->
+  <text x="200" y="365" font-family="monospace" font-size="10" fill="rgba(255,255,255,0.22)">Pool: 27.3 TB</text>
+  <rect x="200" y="374" width="224" height="8" rx="4" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <rect x="200" y="374" width="47" height="8" rx="4" fill="url(#bar)"/>
+  <text x="255" y="397" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.18)">21% used</text>
+
+  <!-- Synology (backup) -->
+  <text x="490" y="112" font-family="monospace" font-size="11" fill="rgba(255,255,255,0.18)" letter-spacing="2">SYNOLOGY  ·  backup</text>
+  <rect x="480" y="128" width="130" height="200" rx="6" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)" stroke-width="1.2"/>
+  <rect x="492" y="142" width="106" height="28" rx="3" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <rect x="492" y="176" width="106" height="28" rx="3" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <rect x="492" y="210" width="106" height="28" rx="3" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <rect x="492" y="244" width="106" height="28" rx="3" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <circle cx="582" cy="308" r="4" fill="rgba(80,200,120,0.40)"/>
+  <text x="545" y="365" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.18)">9.1 TB · backup only</text>
+
+  <!-- Restic arrow -->
+  <line x1="434" y1="228" x2="478" y2="228" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="456" y="222" text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(255,255,255,0.20)">Restic</text>
+</svg>

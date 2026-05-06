@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 533">
+  <rect width="800" height="533" fill="#222222"/>
+
+  <!-- Dashed uplink -->
+  <line x1="400" y1="90" x2="400" y2="134" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+  <!-- Connecting lines -->
+  <line x1="400" y1="160" x2="220" y2="300" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+  <line x1="400" y1="160" x2="400" y2="310" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+  <line x1="400" y1="160" x2="580" y2="300" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+  <line x1="220" y1="300" x2="300" y2="400" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <line x1="400" y1="310" x2="300" y2="400" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <line x1="400" y1="310" x2="500" y2="400" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <line x1="580" y1="300" x2="500" y2="400" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+  <!-- Internet / VPS node -->
+  <rect x="364" y="68" width="72" height="32" rx="16" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.20)" stroke-width="1.5"/>
+  <text x="400" y="89" text-anchor="middle" font-family="monospace" font-size="10" fill="rgba(255,255,255,0.45)">VPS</text>
+
+  <!-- Central hub (OPNsense) -->
+  <circle cx="400" cy="160" r="26" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.30)" stroke-width="1.5"/>
+  <circle cx="400" cy="160" r="8" fill="rgba(255,255,255,0.55)"/>
+  <!-- Pulse ring -->
+  <circle cx="400" cy="160" r="38" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="3,6"/>
+  <text x="400" y="196" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.30)">OPNsense</text>
+
+  <!-- Secondary nodes -->
+  <circle cx="220" cy="300" r="18" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  <circle cx="220" cy="300" r="6" fill="rgba(80,200,120,0.65)"/>
+  <text x="172" y="320" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.28)">host0</text>
+
+  <circle cx="400" cy="310" r="18" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  <circle cx="400" cy="310" r="6" fill="rgba(80,200,120,0.65)"/>
+  <text x="400" y="340" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.28)">host2</text>
+
+  <circle cx="580" cy="300" r="18" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  <circle cx="580" cy="300" r="6" fill="rgba(80,200,120,0.65)"/>
+  <text x="628" y="320" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.28)">host1</text>
+
+  <!-- Leaf nodes -->
+  <circle cx="300" cy="400" r="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+  <circle cx="300" cy="400" r="4" fill="rgba(255,255,255,0.35)"/>
+
+  <circle cx="500" cy="400" r="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.10)" stroke-width="1"/>
+  <circle cx="500" cy="400" r="4" fill="rgba(255,255,255,0.35)"/>
+</svg>

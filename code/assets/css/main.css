@@ -3065,12 +3065,18 @@ input, select, textarea {
 				opacity: 1;
 			}
 
+
+
+		.spotlights > section:nth-child(1) {
+			background-color: rgba(0, 0, 0, 0.1);
+		}
+
 		.spotlights > section:nth-child(2) {
 			background-color: rgba(0, 0, 0, 0.05);
 		}
-
+		
 		.spotlights > section:nth-child(3) {
-			background-color: rgba(0, 0, 0, 0.1);
+			background-color: rgba(0, 0, 0, 0.025);
 		}
 
 		.spotlights > section.inactive > .image:before,
@@ -3242,7 +3248,7 @@ input, select, textarea {
 		}
 
 		.wrapper.style1 {
-			background-color: #222222;
+			background-color: #252525;
 		}
 
 		.wrapper.style1-alt {
@@ -3913,3 +3919,47 @@ input, select, textarea {
 			}
 
 		}
+
+/* =====================================================
+   Homelab pages — shared styles
+   ===================================================== */
+
+.hl-table { width:100%; border-collapse:collapse; margin:1em 0 1.5em 0; font-size:0.9em; }
+.hl-table th { background:rgba(255,255,255,0.08); padding:0.5em 0.8em; text-align:left; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; font-size:0.8em; border-bottom:1px solid rgba(255,255,255,0.15); }
+.hl-table td { padding:0.5em 0.8em; border-bottom:1px solid rgba(255,255,255,0.07); vertical-align:top; }
+.hl-table tr:last-child td { border-bottom:none; }
+
+.badge { display:inline-block; padding:0.2em 0.6em; border-radius:3px; font-size:0.75em; font-weight:700; letter-spacing:0.04em; background:rgba(255,255,255,0.12); margin:0.1em; }
+.badge-green  { background:rgba(80,200,120,0.25);  color:#7dffb3; }
+.badge-blue   { background:rgba(80,160,255,0.22);  color:#99ccff; }
+.badge-purple { background:rgba(160,80,255,0.22);  color:#cc99ff; }
+.badge-yellow { background:rgba(255,200,60,0.22);  color:#ffe080; }
+.badge-grey   { background:rgba(180,180,180,0.15); color:#cccccc; }
+
+.section-label { font-size:0.75em; letter-spacing:0.15em; text-transform:uppercase; opacity:0.55; margin-bottom:0.6em; margin-top:1.8em; display:block; }
+
+.host-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:1.2em 1.4em; margin-bottom:0.8em; }
+.host-card h4 { margin:0 0 0.5em 0; font-size:1.05em; }
+.host-card p  { margin:0; font-size:0.87em; opacity:0.85; line-height:1.7; }
+
+.vm-list { margin:0.8em 0 0 0; padding-left:0; list-style:none; }
+.vm-list li { font-size:0.85em; padding:0.3em 0; border-top:1px solid rgba(255,255,255,0.06); opacity:0.85; }
+.vm-list li:first-child { border-top:none; }
+
+#intro.wrapper { padding:4em 0 2em 0; }
+
+/* Homelab-Network extras */
+.arch-diagram { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:1.4em 1.8em; font-family:monospace; font-size:0.85em; line-height:2; margin:1em 0 1.5em 0; white-space:pre; overflow-x:auto; }
+.detail-block { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:1.2em 1.4em; margin-bottom:0.8em; }
+.detail-block h4 { margin:0 0 0.5em 0; font-size:1.05em; }
+.detail-block p  { margin:0; font-size:0.87em; opacity:0.85; line-height:1.7; }
+
+/* Homelab-Storage extras */
+.timeline { list-style:none; padding:0; margin:0.5em 0 1.5em 0; border-left:2px solid rgba(255,255,255,0.15); padding-left:1.4em; }
+.timeline li { position:relative; margin-bottom:0.7em; font-size:0.88em; }
+.timeline li::before { content:''; position:absolute; left:-1.55em; top:0.42em; width:0.65em; height:0.65em; border-radius:50%; background:rgba(255,255,255,0.4); }
+.timeline .time { display:inline-block; width:5em; opacity:0.6; font-family:monospace; }
+.stat-row { display:flex; gap:2em; flex-wrap:wrap; margin:1em 0 1.5em 0; }
+.stat { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:1em 1.4em; flex:1; min-width:130px; }
+.stat .num { font-size:1.8em; font-weight:700; line-height:1.2; }
+.stat .label { font-size:0.75em; opacity:0.55; text-transform:uppercase; letter-spacing:0.1em; }
