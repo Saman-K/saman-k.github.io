@@ -12,7 +12,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="code/assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="code/assets/css/noscript.css" /></noscript>
-		<meta name="p:domain_verify" content="c9f7afa5d3cb4f8aa3a61aa6548ac8e6"/>
 	</head>
 	<body class="is-preload">
 
@@ -25,7 +24,7 @@
 						<li><a href="#host0">host0</a></li>
 						<li><a href="#host1">host1</a></li>
 						<li><a href="#host2">host2</a></li>
-						<li><a href="#synology">Synology</a></li>
+						<li><a href="#synology">Backup NAS</a></li>
 					</ul>
 				</nav>
 			</header>
@@ -117,26 +116,25 @@
 
 							<table class="hl-table">
 								<tbody>
-									<tr><th style="width:30%">Chassis</th><td>HPE ProLiant MicroServer Gen10</td></tr>
-									<tr><th>CPU</th><td>AMD Opteron X3216 APU, 2 cores</td></tr>
+									<tr><th style="width:30%">CPU</th><td>Low-power AMD APU, 2 cores</td></tr>
 									<tr><th>Hypervisor</th><td>Proxmox VE</td></tr>
-									<tr><th>Storage VM</th><td>TrueNAS SCALE, 24&nbsp;GiB RAM allocated</td></tr>
+									<tr><th>Storage VM</th><td>ZFS-based NAS VM, 24&nbsp;GiB RAM allocated</td></tr>
 									<tr><th>Role</th><td><span class="badge badge-purple">Storage</span> <span class="badge badge-yellow">Backup agent</span></td></tr>
 								</tbody>
 							</table>
 
-							<span class="section-label">Drives, ZFS pool <code>bigdisk</code></span>
+							<span class="section-label">Drives, ZFS pool</span>
 							<table class="hl-table">
 								<thead>
 									<tr><th>Drive</th><th>Capacity</th><th>Status</th></tr>
 								</thead>
 								<tbody>
-									<tr><td>Seagate IronWolf ST10000NE0008</td><td>10&nbsp;TB</td><td><span class="badge badge-green">Healthy</span></td></tr>
-									<tr><td>Seagate IronWolf ST10000NE0008</td><td>10&nbsp;TB</td><td><span class="badge badge-green">Healthy</span></td></tr>
-									<tr><td>Toshiba MG10ADA10TE</td><td>10&nbsp;TB</td><td><span class="badge badge-green">Healthy</span> <span class="badge badge-grey">Replacement</span></td></tr>
+									<tr><td>Seagate IronWolf 10 TB</td><td>10&nbsp;TB</td><td><span class="badge badge-green">Healthy</span></td></tr>
+									<tr><td>Seagate IronWolf 10 TB</td><td>10&nbsp;TB</td><td><span class="badge badge-green">Healthy</span></td></tr>
+									<tr><td>Toshiba 10 TB</td><td>10&nbsp;TB</td><td><span class="badge badge-green">Healthy</span> <span class="badge badge-grey">Replacement</span></td></tr>
 								</tbody>
 							</table>
-							<p style="font-size:0.9em; opacity:0.8;">Drives are passed through to TrueNAS by stable device ID and arranged as a single RAIDZ1 pool, so one drive can fail without data loss. The most recent rebuild, after a Toshiba replaced an aging Seagate, completed cleanly with no errors.</p>
+							<p style="font-size:0.9em; opacity:0.8;">Drives are passed through to the NAS VM by stable device ID and arranged as a single RAIDZ1 pool, so one drive can fail without data loss. The most recent rebuild, after a Toshiba replaced an aging Seagate, completed cleanly with no errors.</p>
 						</div>
 					</section>
 
@@ -149,8 +147,8 @@
 
 							<table class="hl-table">
 								<tbody>
-									<tr><th style="width:30%">CPU</th><td>Intel Core i7-13700, 16 cores / 24 threads</td></tr>
-									<tr><th>GPU</th><td>NVIDIA Quadro T1000 Mobile, passed through to the VM</td></tr>
+									<tr><th style="width:30%">CPU</th><td>Modern Intel Core i7</td></tr>
+									<tr><th>GPU</th><td>NVIDIA Quadro GPU, passed through to the VM</td></tr>
 									<tr><th>Hypervisor</th><td>Proxmox VE</td></tr>
 									<tr><th>Role</th><td><span class="badge badge-green">Applications</span></td></tr>
 								</tbody>
@@ -165,23 +163,22 @@
 						</div>
 					</section>
 
-				<!-- Synology -->
 					<section id="synology" class="wrapper style2 fade-up">
 						<div class="inner">
 							<span class="section-label">Backup target</span>
-							<h2>Synology DS416slim</h2>
-							<p>Off-Proxmox backup destination. Deliberately on a different OS, a different vendor, and a different filesystem than the primary NAS, so a bug, a misconfigured upgrade, or a ransomware event on TrueNAS can&rsquo;t cascade into the backups. Local-only, no remote access, no cloud sync.</p>
+							<h2>Synology NAS</h2>
+							<p>Off-Proxmox backup destination. Deliberately on a different OS, a different vendor, and a different filesystem than the primary NAS, so a bug, a misconfigured upgrade, or a ransomware event on the primary NAS can&rsquo;t cascade into the backups. Local-only, no remote access, no cloud sync.</p>
 
 							<table class="hl-table">
 								<tbody>
-									<tr><th style="width:30%">Model</th><td>Synology DS416slim</td></tr>
+									<tr><th style="width:30%">Type</th><td>Synology NAS</td></tr>
 									<tr><th>OS</th><td>DSM</td></tr>
 									<tr><th>Volume</th><td>9.1&nbsp;TB usable</td></tr>
 									<tr><th>Protocols</th><td>NFS only (SMB disabled)</td></tr>
 									<tr><th>Role</th><td><span class="badge badge-yellow">Backups</span> <span class="badge badge-grey">LAN-only</span></td></tr>
 								</tbody>
 							</table>
-							<p style="font-size:0.9em; opacity:0.8;">Holds Proxmox VM dumps and a Restic repository of TrueNAS dataset snapshots. The full backup strategy is on the <a href="Homelab-Storage">Storage &amp; Backups</a> page.</p>
+							<p style="font-size:0.9em; opacity:0.8;">Holds Proxmox VM dumps and a Restic repository of NAS dataset snapshots. The full backup strategy is on the <a href="Homelab-Storage">Storage &amp; Backups</a> page.</p>
 						</div>
 					</section>
 
