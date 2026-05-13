@@ -6,10 +6,10 @@
 -->
 <html>
 	<head>
-		<title>Saman.K Homelab — Hardware</title>
+		<title>Saman.K Homelab, Hardware</title>
 		<link rel="shortcut icon" href="images/my%20head%2014.7x15%20icon%20XS.png"/>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="code/assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="code/assets/css/noscript.css" /></noscript>
 		<meta name="p:domain_verify" content="c9f7afa5d3cb4f8aa3a61aa6548ac8e6"/>
@@ -37,16 +37,151 @@
 					<section id="intro" class="wrapper style1 fade-up">
 						<div class="inner">
 							<a href="Homelab"><h1 style="text-decoration:none">Hardware</h1></a>
-							<p>The physical machines and network hardware running the lab.</p>
+							<p>The physical machines and network hardware running the lab. Three Proxmox hosts, each sized for its role rather than uniform: a low-power node for networking, an older APU for storage, and a recent multi-core CPU with a GPU for the application workload.</p>
+
+							<div class="stat-row">
+								<div class="stat">
+									<div class="num">3</div>
+									<div class="label">Proxmox hosts</div>
+								</div>
+								<div class="stat">
+									<div class="num">2</div>
+									<div class="label">NAS / backup</div>
+								</div>
+								<div class="stat">
+									<div class="num">30&nbsp;TB</div>
+									<div class="label">Raw spinning</div>
+								</div>
+								<div class="stat">
+									<div class="num">10&nbsp;GbE</div>
+									<div class="label">Uplink</div>
+								</div>
+							</div>
 						</div>
 					</section>
 
-				<!-- Placeholder -->
-					<section class="wrapper style2 fade-up">
-						<div class="inner" style="text-align:center; padding: 3em 0;">
-							<span class="icon solid major fa-file-alt" style="opacity:0.3; margin-bottom:0.5em;"></span>
-							<h2 style="opacity:0.5;">Documentation in progress</h2>
-							<p style="opacity:0.4;">This section is being written. Check back soon.</p>
+				<!-- Switch -->
+					<section id="switch" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Networking</span>
+							<h2>Switch: KeepLink KP-9000</h2>
+							<p>A compact managed switch chosen to push past gigabit on the LAN without jumping to enterprise-priced 10&nbsp;GbE everywhere. The 10&nbsp;Gb SFP+ port is the uplink to the NAS so storage traffic between hosts isn&rsquo;t bottlenecked by access-port speed, and the PoE+ ports power the wireless access points.</p>
+
+							<table class="hl-table">
+								<tbody>
+									<tr><th style="width:30%">Model</th><td>KeepLink KP-9000-9XHPML-X-AC</td></tr>
+									<tr><th>Type</th><td>9-Port Multi-Gigabit Managed Switch</td></tr>
+									<tr><th>Access ports</th><td>8 &times; 2.5&nbsp;Gbps PoE+</td></tr>
+									<tr><th>Uplink</th><td>1 &times; 10&nbsp;Gbps SFP+</td></tr>
+									<tr><th>Management</th><td>Web UI, VLANs, link aggregation</td></tr>
+									<tr><th>Spec sheet</th><td><a href="https://keeplink.pro/kp-9000-9xhpml-x" target="_blank" rel="noopener">keeplink.pro/kp-9000-9xhpml-x</a></td></tr>
+								</tbody>
+							</table>
+						</div>
+					</section>
+
+				<!-- host0 -->
+					<section id="host0" class="wrapper style3 fade-up">
+						<div class="inner">
+							<span class="section-label">Network host</span>
+							<h2>host0: Router and VPN</h2>
+							<p>The smallest of the three hosts, deliberately. Networking sits on its own node so the firewall and VPN stay up when the application hosts are powered off for maintenance or upgrades, and so the router has no resource contention with anything else.</p>
+
+							<table class="hl-table">
+								<tbody>
+									<tr><th style="width:30%">CPU</th><td>Intel N100, 4 cores</td></tr>
+									<tr><th>Hypervisor</th><td>Proxmox VE</td></tr>
+									<tr><th>Power profile</th><td>Passively cooled, low idle draw</td></tr>
+									<tr><th>Role</th><td><span class="badge badge-blue">Networking</span> <span class="badge badge-grey">Always-on</span></td></tr>
+								</tbody>
+							</table>
+
+							<span class="section-label">Workloads</span>
+							<div class="host-card">
+								<h4>Firewall and router (VM)</h4>
+								<p>BSD-based firewall handling all LAN routing, NAT, and DNS forwarding for the lab. Also maintains a tunneled outbound gateway used for external access to internal services.</p>
+							</div>
+							<div class="host-card">
+								<h4>Network management (VM)</h4>
+								<p>Wireless controller for the access points, a small internal homepage, and a local speed-test endpoint. Kept separate from the firewall VM so neither one can take the other down.</p>
+							</div>
+						</div>
+					</section>
+
+				<!-- host1 -->
+					<section id="host1" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Storage host</span>
+							<h2>host1: NAS</h2>
+							<p>A purpose-built small NAS chassis with an embedded AMD APU. The CPU is modest, but for ZFS over NFS at home-network speeds it&rsquo;s plenty, and the box was designed around the 3.5&Prime; drives that matter for capacity.</p>
+
+							<table class="hl-table">
+								<tbody>
+									<tr><th style="width:30%">Chassis</th><td>HPE ProLiant MicroServer Gen10</td></tr>
+									<tr><th>CPU</th><td>AMD Opteron X3216 APU, 2 cores</td></tr>
+									<tr><th>Hypervisor</th><td>Proxmox VE</td></tr>
+									<tr><th>Storage VM</th><td>TrueNAS SCALE, 24&nbsp;GiB RAM allocated</td></tr>
+									<tr><th>Role</th><td><span class="badge badge-purple">Storage</span> <span class="badge badge-yellow">Backup agent</span></td></tr>
+								</tbody>
+							</table>
+
+							<span class="section-label">Drives, ZFS pool <code>bigdisk</code></span>
+							<table class="hl-table">
+								<thead>
+									<tr><th>Drive</th><th>Capacity</th><th>Status</th></tr>
+								</thead>
+								<tbody>
+									<tr><td>Seagate IronWolf ST10000NE0008</td><td>10&nbsp;TB</td><td><span class="badge badge-green">Healthy</span></td></tr>
+									<tr><td>Seagate IronWolf ST10000NE0008</td><td>10&nbsp;TB</td><td><span class="badge badge-green">Healthy</span></td></tr>
+									<tr><td>Toshiba MG10ADA10TE</td><td>10&nbsp;TB</td><td><span class="badge badge-green">Healthy</span> <span class="badge badge-grey">Replacement</span></td></tr>
+								</tbody>
+							</table>
+							<p style="font-size:0.9em; opacity:0.8;">Drives are passed through to TrueNAS by stable device ID and arranged as a single RAIDZ1 pool, so one drive can fail without data loss. The most recent rebuild, after a Toshiba replaced an aging Seagate, completed cleanly with no errors.</p>
+						</div>
+					</section>
+
+				<!-- host2 -->
+					<section id="host2" class="wrapper style3 fade-up">
+						<div class="inner">
+							<span class="section-label">Application host</span>
+							<h2>host2: Application Server</h2>
+							<p>The workhorse. Modern multi-core CPU with a discrete GPU passed through to a single Linux VM that runs the full self-hosted application stack in containers. Sized so transcoding, photo indexing, and database workloads don&rsquo;t fight each other for CPU.</p>
+
+							<table class="hl-table">
+								<tbody>
+									<tr><th style="width:30%">CPU</th><td>Intel Core i7-13700, 16 cores / 24 threads</td></tr>
+									<tr><th>GPU</th><td>NVIDIA Quadro T1000 Mobile, passed through to the VM</td></tr>
+									<tr><th>Hypervisor</th><td>Proxmox VE</td></tr>
+									<tr><th>Role</th><td><span class="badge badge-green">Applications</span></td></tr>
+								</tbody>
+							</table>
+
+							<span class="section-label">Workloads</span>
+							<div class="host-card">
+								<h4>home-services (VM)</h4>
+								<p>Linux Docker host. Media, photos, files, productivity apps, automation, identity, and monitoring, all containerised, all behind a reverse proxy with SSO. The GPU handles hardware transcoding and ML-based photo indexing.</p>
+								<p style="margin-top:0.6em; font-size:0.85em; opacity:0.65;">See the <a href="Homelab-Services">Services</a> page for what runs in here.</p>
+							</div>
+						</div>
+					</section>
+
+				<!-- Synology -->
+					<section id="synology" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Backup target</span>
+							<h2>Synology DS416slim</h2>
+							<p>Off-Proxmox backup destination. Deliberately on a different OS, a different vendor, and a different filesystem than the primary NAS, so a bug, a misconfigured upgrade, or a ransomware event on TrueNAS can&rsquo;t cascade into the backups. Local-only, no remote access, no cloud sync.</p>
+
+							<table class="hl-table">
+								<tbody>
+									<tr><th style="width:30%">Model</th><td>Synology DS416slim</td></tr>
+									<tr><th>OS</th><td>DSM</td></tr>
+									<tr><th>Volume</th><td>9.1&nbsp;TB usable</td></tr>
+									<tr><th>Protocols</th><td>NFS only (SMB disabled)</td></tr>
+									<tr><th>Role</th><td><span class="badge badge-yellow">Backups</span> <span class="badge badge-grey">LAN-only</span></td></tr>
+								</tbody>
+							</table>
+							<p style="font-size:0.9em; opacity:0.8;">Holds Proxmox VM dumps and a Restic repository of TrueNAS dataset snapshots. The full backup strategy is on the <a href="Homelab-Storage">Storage &amp; Backups</a> page.</p>
 						</div>
 					</section>
 
