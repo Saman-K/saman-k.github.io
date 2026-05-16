@@ -6,13 +6,12 @@
 -->
 <html>
 	<head>
-		<title>Saman.K Homelab — Storage &amp; Backups</title>
+		<title>Saman.K Homelab, Storage &amp; Backups</title>
 		<link rel="shortcut icon" href="images/my%20head%2014.7x15%20icon%20XS.png"/>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="code/assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="code/assets/css/noscript.css" /></noscript>
-		<meta name="p:domain_verify" content="c9f7afa5d3cb4f8aa3a61aa6548ac8e6"/>
 	</head>
 	<body class="is-preload">
 
@@ -21,8 +20,8 @@
 				<a href="Homelab" class="title">← Homelab</a>
 				<nav>
 					<ul>
-						<li><a href="#truenas">TrueNAS</a></li>
-						<li><a href="#synology">Synology</a></li>
+						<li><a href="#truenas">Primary NAS</a></li>
+						<li><a href="#synology">Backup NAS</a></li>
 						<li><a href="#backups">Backups</a></li>
 						<li><a href="#timeline">Timeline</a></li>
 					</ul>
@@ -36,17 +35,189 @@
 					<section id="intro" class="wrapper style1 fade-up">
 						<div class="inner">
 							<a href="Homelab"><h1 style="text-decoration:none">Storage &amp; Backups</h1></a>
-							<p>How data is stored, protected, and backed up.</p>
+							<p>How data is stored, protected, and backed up. The primary NAS runs ZFS, serving media and personal files to the rest of the lab over NFS. A separate NAS is the dedicated backup target, kept on a different OS and filesystem so that no single failure can take out both the data and the backups. VM snapshots, dataset snapshots, and Restic backups run on overlapping schedules through the night.</p>
+
+							<div class="stat-row">
+								<div class="stat">
+									<div class="num">30&nbsp;TB</div>
+									<div class="label">Raw capacity</div>
+								</div>
+								<div class="stat">
+									<div class="num">RAIDZ1</div>
+									<div class="label">ZFS topology</div>
+								</div>
+								<div class="stat">
+									<div class="num">3</div>
+									<div class="label">Backup layers</div>
+								</div>
+								<div class="stat">
+									<div class="num">9.1&nbsp;TB</div>
+									<div class="label">Backup target</div>
+								</div>
+							</div>
 						</div>
 					</section>
 
-				
-				<!-- Placeholder -->
-					<section class="wrapper style2 fade-up">
-						<div class="inner" style="text-align:center; padding: 3em 0;">
-							<span class="icon solid major fa-file-alt" style="opacity:0.3; margin-bottom:0.5em;"></span>
-							<h2 style="opacity:0.5;">Documentation in progress</h2>
-							<p style="opacity:0.4;">This section is being written. Check back soon.</p>
+					<!-- Primary NAS -->
+					<section id="truenas" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Primary NAS</span>
+							<h2>Primary NAS</h2>
+							<p>The primary NAS runs as a VM on <a href="Homelab-Hardware#host1">host1</a>, with the three data drives passed through directly so ZFS has raw access to the hardware. The OS disk is separate and not part of the pool, which means the pool survives an OS reinstall and the OS disk can be backed up independently.</p>
+
+							<span class="section-label">ZFS pool</span>
+							<table class="hl-table">
+								<tbody>
+									<tr><th style="width:30%">Topology</th><td>RAIDZ1, 3 drives</td></tr>
+									<tr><th>Total capacity</th><td>27.3 TB</td></tr>
+									<tr><th>Used</th><td>5.79 TB (21%)</td></tr>
+									<tr><th>Status</th><td><span class="badge badge-green">Online</span></td></tr>
+									<tr><th>Last resilver</th><td>Recently, completed cleanly</td></tr>
+								</tbody>
+							</table>
+
+							<span class="section-label">Drives</span>
+							<table class="hl-table">
+								<thead>
+									<tr><th>Model</th><th>Capacity</th><th>Status</th></tr>
+								</thead>
+								<tbody>
+									<tr><td>Seagate IronWolf 10 TB</td><td>10 TB</td><td><span class="badge badge-green">Healthy</span></td></tr>
+									<tr><td>Seagate IronWolf 10 TB</td><td>10 TB</td><td><span class="badge badge-green">Healthy</span></td></tr>
+									<tr><td>Toshiba 10 TB</td><td>10 TB</td><td><span class="badge badge-green">Healthy</span> <span class="badge badge-grey">Replaced Apr 2026</span></td></tr>
+								</tbody>
+							</table>
+							<p style="font-size:0.9em; opacity:0.8;">One of the original Seagates was approaching a concerning age. It was replaced with a Toshiba IronWolf equivalent in April 2026; the resilver completed without errors.</p>
+
+							<span class="section-label">Datasets</span>
+							<table class="hl-table">
+								<thead>
+									<tr><th>Category</th><th>Size</th></tr>
+								</thead>
+								<tbody>
+									<tr><td>Media</td><td>2.1 TB</td></tr>
+									<tr><td>Personal files</td><td>1.1 TB</td></tr>
+									<tr><td>Photos</td><td>596 GB</td></tr>
+									<tr><td>Software</td><td>341 GB</td></tr>
+									<tr><td>Shared files</td><td>109 GB</td></tr>
+									<tr><td>Books</td><td>74 GB</td></tr>
+									<tr><td>Music</td><td>~0</td></tr>
+								</tbody>
+							</table>
+							<p style="font-size:0.9em; opacity:0.8;">All datasets are served over NFS to the application host. The media dataset is the largest and grows steadily; everything else is relatively stable.</p>
+
+							<span class="section-label">ZFS snapshots</span>
+							<table class="hl-table">
+								<thead>
+									<tr><th>Schedule</th><th>Retention</th></tr>
+								</thead>
+								<tbody>
+									<tr><td>Daily</td><td>3 days</td></tr>
+									<tr><td>Weekly</td><td>2 weeks</td></tr>
+									<tr><td>Monthly</td><td>2 months</td></tr>
+								</tbody>
+							</table>
+							<p style="font-size:0.9em; opacity:0.8;">Snapshots are applied recursively to the entire pool. They are copy-on-write, so they consume no space at creation and only grow as blocks are changed or deleted. This provides fast point-in-time recovery for accidental deletions without needing a full backup restore.</p>
+						</div>
+					</section>
+
+					<!-- Synology -->
+					<section id="synology" class="wrapper style3 fade-up">
+						<div class="inner">
+							<span class="section-label">Backup target</span>
+							<h2>Synology NAS</h2>
+							<p>The backup NAS is the off-primary backup destination. It runs a different OS, a different filesystem, and is from a different vendor than the primary NAS, which means a bug, a misconfigured upgrade, or ransomware hitting the primary NAS cannot cascade into the backups. SMB is disabled; it serves NFS only. It is local-only with no remote access and no cloud sync, which means it is not reachable from the primary attack surface.</p>
+
+							<table class="hl-table">
+								<tbody>
+									<tr><th style="width:30%">Type</th><td>Synology NAS</td></tr>
+									<tr><th>OS</th><td>DSM</td></tr>
+									<tr><th>Volume</th><td>9.1 TB usable</td></tr>
+									<tr><th>Used</th><td>4.1 TB</td></tr>
+									<tr><th>Protocols</th><td>NFS only (SMB disabled)</td></tr>
+									<tr><th>Remote access</th><td><span class="badge badge-grey">None, LAN only</span></td></tr>
+								</tbody>
+							</table>
+
+							<span class="section-label">What it holds</span>
+							<div class="host-card">
+								<h4>VM dumps</h4>
+								<p>Proxmox vzdump backups of the primary NAS VM and the backup agent container, both from host1. These are kept separate from the primary NAS data drives to avoid a circular dependency: the NAS cannot back itself up to itself.</p>
+							</div>
+							<div class="host-card">
+								<h4>Restic repository</h4>
+								<p>A Restic backup repository containing snapshots of the primary NAS datasets and VM dumps. This is the second layer of protection for the data on the primary NAS, stored on completely different hardware.</p>
+							</div>
+						</div>
+					</section>
+
+					<!-- Backups -->
+					<section id="backups" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Strategy</span>
+							<h2>Backups</h2>
+							<p>Three overlapping backup layers run independently. No single failure takes out more than one layer. The design principle is that primary NAS data goes to the backup NAS, VM configs go to the primary NAS, and everything on the primary NAS is also covered by Restic on the backup NAS.</p>
+
+							<span class="section-label">Layers</span>
+							<table class="hl-table">
+								<thead>
+									<tr><th>Layer</th><th>What</th><th>Where</th><th>Tool</th></tr>
+								</thead>
+								<tbody>
+									<tr><td>VM backups</td><td>host0 VMs (firewall, network management)</td><td>Primary NAS</td><td>Proxmox vzdump</td></tr>
+									<tr><td>VM backups</td><td>host2 VM (all services)</td><td>Primary NAS</td><td>Proxmox vzdump</td></tr>
+									<tr><td>VM backups</td><td>host1 VMs (NAS OS, backup agent)</td><td>Backup NAS</td><td>Proxmox vzdump</td></tr>
+									<tr><td>Config backups</td><td>Firewall configuration</td><td>Primary NAS</td><td>API pull + cron</td></tr>
+									<tr><td>Data backups</td><td>Primary NAS datasets and VM dumps</td><td>Backup NAS</td><td>Restic</td></tr>
+									<tr><td>App backups</td><td>Docker configs and database dumps</td><td>Primary NAS</td><td>Restic</td></tr>
+								</tbody>
+							</table>
+
+							<span class="section-label">VM backups</span>
+							<div class="host-card">
+								<h4>Proxmox vzdump</h4>
+								<p>All VMs and containers across the three Proxmox hosts are backed up nightly using vzdump. The critical VMs (firewall, all services) back up to the primary NAS. The primary NAS VM itself and the backup agent container back up to the backup NAS instead, to avoid the circular dependency of the NAS backing up to itself.</p>
+								<p style="margin-top:0.6em; font-size:0.9em; opacity:0.8;">The NAS backup covers only the OS disk, not the data drives. The data drives are covered separately by Restic. This keeps the VM dump small and fast.</p>
+							</div>
+
+							<span class="section-label">Data backups</span>
+							<div class="host-card">
+								<h4>Restic, backup agent on host1</h4>
+								<p>A dedicated backup agent container on host1 mounts the primary NAS datasets over NFS and backs them up to a Restic repository on the backup NAS. This runs nightly and covers all datasets plus the VM dumps that land on the primary NAS. Pruning and integrity checks run on separate schedules.</p>
+							</div>
+							<div class="host-card">
+								<h4>Restic, services host</h4>
+								<p>The services VM on host2 runs its own Restic agent. Before backing up, it dumps the database for each running service to disk. The Restic backup then captures both the Docker configs and the fresh database dumps, so the VM-level backup that follows always contains a recent DB dump. Failed dumps are deleted immediately so no partial files are included.</p>
+							</div>
+
+							<span class="section-label">Retention</span>
+							<table class="hl-table">
+								<tbody>
+									<tr><th style="width:40%">Keep daily</th><td>3</td></tr>
+									<tr><th>Keep weekly</th><td>2</td></tr>
+									<tr><th>Keep monthly</th><td>2</td></tr>
+								</tbody>
+							</table>
+							<p style="font-size:0.9em; opacity:0.8;">Consistent across both Restic agents and the Proxmox vzdump jobs. Chosen to balance recovery window against backup NAS space usage.</p>
+						</div>
+					</section>
+
+				<!-- Timeline -->
+					<section id="timeline" class="wrapper style3 fade-up">
+						<div class="inner">
+							<span class="section-label">Daily schedule</span>
+							<h2>Backup Timeline</h2>
+							<p>All backup jobs are staggered overnight so that each layer completes before the next begins. The firewall config is first since it is the lightest job. Database dumps and Restic run in the early hours before the VM-level dumps start. A weekly integrity check samples the Restic repository to verify recoverability.</p>
+
+							<ul class="timeline">
+								<li>Firewall config backup to primary NAS</li>
+								<li>Services DB dump, then Restic backup to primary NAS</li>
+								<li>Restic backup of primary NAS datasets to backup NAS, and Restic prune on services</li>
+								<li>Proxmox vzdump: firewall and network management VMs to primary NAS, and Restic prune on datasets</li>
+								<li>Proxmox vzdump: services VM to primary NAS</li>
+								<li>Proxmox vzdump: NAS OS VM and backup agent to backup NAS</li>
+								<li>Weekly: Restic integrity check (10% sample)</li>
+							</ul>
 						</div>
 					</section>
 
