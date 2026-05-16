@@ -6,13 +6,12 @@
 -->
 <html>
 	<head>
-		<title>Saman.K Homelab — Services</title>
+		<title>Saman.K Homelab, Services</title>
 		<link rel="shortcut icon" href="images/my%20head%2014.7x15%20icon%20XS.png"/>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="code/assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="code/assets/css/noscript.css" /></noscript>
-		<meta name="p:domain_verify" content="c9f7afa5d3cb4f8aa3a61aa6548ac8e6"/>
 	</head>
 	<body class="is-preload">
 
@@ -37,17 +36,125 @@
 					<section id="intro" class="wrapper style1 fade-up">
 						<div class="inner">
 							<a href="Homelab"><h1 style="text-decoration:none">Services</h1></a>
-							<p>The self-hosted applications running on the lab.</p>
+							<p>All services run as containers on a single Linux Docker host on <a href="Homelab-Hardware#host2">host2</a>, with NFS mounts to the primary NAS for media and data storage. Everything sits behind a reverse proxy with SSO, so there is one login for the whole stack. Public services are reachable via a tunneled outbound gateway; internal-only services stay off the internet entirely.</p>
+
+							<div class="stat-row">
+								<div class="stat">
+									<div class="num">5</div>
+									<div class="label">Public services</div>
+								</div>
+								<div class="stat">
+									<div class="num">10+</div>
+									<div class="label">Internal services</div>
+								</div>
+								<div class="stat">
+									<div class="num">SSO</div>
+									<div class="label">Single login</div>
+								</div>
+								<div class="stat">
+									<div class="num">GPU</div>
+									<div class="label">HW transcoding</div>
+								</div>
+							</div>
 						</div>
 					</section>
 
-				
-				<!-- Placeholder -->
-					<section class="wrapper style2 fade-up">
-						<div class="inner" style="text-align:center; padding: 3em 0;">
-							<span class="icon solid major fa-file-alt" style="opacity:0.3; margin-bottom:0.5em;"></span>
-							<h2 style="opacity:0.5;">Documentation in progress</h2>
-							<p style="opacity:0.4;">This section is being written. Check back soon.</p>
+				<!-- Media -->
+					<section id="media" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Media</span>
+							<h2>Media</h2>
+							<p>The media stack is built around Jellyfin for video and Audiobookshelf for audio. The GPU on host2 handles hardware transcoding so Jellyfin can serve multiple simultaneous streams without touching the CPU. A request manager connects to the automation stack to handle the full download-to-library pipeline.</p>
+
+							<div class="host-card">
+								<h4>Jellyfin <span class="badge badge-green">Public</span></h4>
+								<p>Media server for films and TV. GPU-accelerated transcoding via the passed-through NVIDIA Quadro. Libraries live on the primary NAS over NFS.</p>
+							</div>
+							<div class="host-card">
+								<h4>Request manager <span class="badge badge-grey">Internal</span></h4>
+								<p>Request front-end for the media server. Users can search for titles and request them; the request manager routes to the automation stack automatically.</p>
+							</div>
+							<div class="host-card">
+								<h4>Audiobookshelf <span class="badge badge-green">Public</span></h4>
+								<p>Audiobook and podcast server. Handles streaming, progress sync, and library management. Books live on the primary NAS over NFS.</p>
+							</div>
+							<div class="host-card">
+								<h4>Immich <span class="badge badge-grey">Internal</span></h4>
+								<p>Self-hosted photo and video library with ML-powered facial recognition, object tagging, and search. Photos are stored on the primary NAS. Internal-only, not exposed externally.</p>
+							</div>
+						</div>
+					</section>
+
+				<!-- Files and Productivity -->
+					<section id="files" class="wrapper style3 fade-up">
+						<div class="inner">
+							<span class="section-label">Files and Productivity</span>
+							<h2>Files and Productivity</h2>
+							<p>File sync, wiki, and a self-hosted site, all containerised. Nextcloud handles the job that iCloud or Google Drive usually would. Bookstack provides structured documentation for projects and notes. WordPress runs a personal site that stays internal.</p>
+
+							<div class="host-card">
+								<h4>Nextcloud <span class="badge badge-green">Public</span></h4>
+								<p>File sync, contacts, and calendar. OIDC login via the identity provider. CalDAV and CardDAV are handled through reverse proxy redirects so native clients work without any manual configuration.</p>
+							</div>
+							<div class="host-card">
+								<h4>Bookstack <span class="badge badge-grey">Internal</span></h4>
+								<p>Wiki-style documentation platform organised into books, chapters, and pages. Used for project notes and reference docs.</p>
+							</div>
+							<div class="host-card">
+								<h4>WordPress <span class="badge badge-grey">Internal</span></h4>
+								<p>Self-hosted site running internally. Not exposed publicly.</p>
+							</div>
+						</div>
+					</section>
+
+				<!-- Auth and Finance -->
+					<section id="auth" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Auth and Finance</span>
+							<h2>Auth and Finance</h2>
+
+							<div class="host-card">
+								<h4>Identity provider <span class="badge badge-green">Public</span></h4>
+								<p>Central SSO for the entire stack. All public services and most internal services authenticate through here using OIDC. The reverse proxy handles forward auth for services that do not support OIDC natively, so everything shares a single login.</p>
+							</div>
+							<div class="host-card">
+								<h4>Speedtest <span class="badge badge-green">Public</span></h4>
+								<p>Self-hosted internet speed test. Gated behind SSO forward auth so it is publicly reachable but login-protected.</p>
+							</div>
+							<div class="host-card">
+								<h4>Finance <span class="badge badge-grey">Internal</span></h4>
+								<p>Self-hosted personal finance tracking. OIDC login via the identity provider. Internal-only, not exposed externally.</p>
+							</div>
+						</div>
+					</section>
+
+					<!-- Automation -->
+					<section id="automation" class="wrapper style3 fade-up">
+						<div class="inner">
+							<span class="section-label">Automation</span>
+							<h2>Automation</h2>
+							<p>The automation stack handles the full pipeline from a request in the request manager through to a finished file in the media library. An indexer aggregator collects sources, a library manager handles organisation, and a download client handles the actual transfers.</p>
+
+							<table class="hl-table">
+								<thead>
+									<tr><th>Service</th><th>Role</th></tr>
+								</thead>
+								<tbody>
+									<tr><td>Film library manager</td><td>Film library management and automated download requests</td></tr>
+									<tr><td>Indexer aggregator</td><td>Aggregates indexer sources, feeds the library manager</td></tr>
+									<tr><td>Download client</td><td>Handles transfers from indexers to storage</td></tr>
+								</tbody>
+							</table>
+							<p style="font-size:0.9em; opacity:0.8;">All automation services are internal-only. Completed downloads land on the primary NAS over NFS and are picked up by the media server automatically.</p>
+						</div>
+					</section>
+
+				<!-- Monitoring -->
+					<section id="monitoring" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Monitoring</span>
+							<h2>Monitoring</h2>
+							<p>An internal metrics stack collects container-level resource stats and displays them on dashboards. All monitoring services are internal-only and not reachable from outside the network.</p>
 						</div>
 					</section>
 
