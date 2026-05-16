@@ -6,13 +6,12 @@
 -->
 <html>
 	<head>
-		<title>Saman.K Homelab — Network</title>
+		<title>Saman.K Homelab, Network</title>
 		<link rel="shortcut icon" href="images/my%20head%2014.7x15%20icon%20XS.png"/>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="code/assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="code/assets/css/noscript.css" /></noscript>
-		<meta name="p:domain_verify" content="c9f7afa5d3cb4f8aa3a61aa6548ac8e6"/>
 	</head>
 	<body class="is-preload">
 
@@ -23,8 +22,8 @@
 					<ul>
 						<li><a href="#architecture">Architecture</a></li>
 						<li><a href="#firewall">Firewall</a></li>
-						<li><a href="#tunnel">WireGuard</a></li>
-						<li><a href="#mesh">Tailscale</a></li>
+						<li><a href="#tunnel">Tunnel</a></li>
+						<li><a href="#mesh">Device Mesh</a></li>
 						<li><a href="#proxy">Proxy &amp; SSO</a></li>
 					</ul>
 				</nav>
@@ -38,16 +37,115 @@
 						<div class="inner">
 							<a href="Homelab"><h1 style="text-decoration:none">Network</h1></a>
 							<p>How the lab is connected, secured, and made accessible from anywhere.</p>
+
+							<div class="stat-row">
+								<div class="stat">
+									<div class="num">VPS</div>
+									<div class="label">Public gateway</div>
+								</div>
+								<div class="stat">
+									<div class="num">Tunnel</div>
+									<div class="label">Home link</div>
+								</div>
+								<div class="stat">
+									<div class="num">Mesh</div>
+									<div class="label">Device access</div>
+								</div>
+								<div class="stat">
+									<div class="num">SSO</div>
+									<div class="label">Single login</div>
+								</div>
+							</div>
 						</div>
 					</section>
 
-				
-				<!-- Placeholder -->
-					<section class="wrapper style2 fade-up">
-						<div class="inner" style="text-align:center; padding: 3em 0;">
-							<span class="icon solid major fa-file-alt" style="opacity:0.3; margin-bottom:0.5em;"></span>
-							<h2 style="opacity:0.5;">Documentation in progress</h2>
-							<p style="opacity:0.4;">This section is being written. Check back soon.</p>
+				<!-- Architecture -->
+					<section id="architecture" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Overview</span>
+							<h2>Architecture</h2>
+							<p>There are two separate paths for remote access, each optimised for a different use case.</p>
+
+							<div class="host-card">
+								<h4>Public services path</h4>
+								<p>A cloud VPS acts as the public-facing entry point for all externally accessible services. An always-on outbound tunnel connects the home network to the VPS, initiated from the home side. Incoming HTTPS traffic on the VPS is handled by a reverse proxy, which forwards requests through the tunnel to the appropriate service on the LAN. From the internet's perspective, everything terminates at the VPS.</p>
+							</div>
+							<div class="host-card">
+								<h4>Personal device path</h4>
+								<p>Personal devices connect directly to the home LAN via an encrypted device mesh. The mesh provides direct access to the home network for authorised devices without going through the public reverse proxy. This path is used for admin access, SSH, and anything that should never be publicly reachable.</p>
+							</div>
+						</div>
+					</section>
+
+				<!-- Firewall -->
+					<section id="firewall" class="wrapper style3 fade-up">
+						<div class="inner">
+							<span class="section-label">Security</span>
+							<h2>Firewall</h2>
+							<p>The LAN is firewalled and routed by a BSD-based firewall VM running on <a href="Homelab-Hardware#host0">host0</a>. It is the only machine with physical network interfaces, so all traffic in and out of the lab passes through it.</p>
+
+							<div class="host-card">
+								<h4>LAN firewall</h4>
+								<p>Handles all routing, NAT, and DNS for the home network. Default deny on inbound, with explicit rules for the tunnel and any inter-VLAN traffic. The tunnel is initiated outbound so no inbound firewall exceptions are needed on the home side at all.</p>
+							</div>
+							<div class="host-card">
+								<h4>VPS firewall</h4>
+								<p>Firewall with a minimal allowlist: only the ports needed for HTTPS, the tunnel, and device mesh coordination. SSH is key-only with password authentication disabled and root login restricted. All other ports are denied by default.</p>
+							</div>
+							<div class="host-card">
+								<h4>SSH hardening</h4>
+								<p>Key-based authentication only across all hosts. Password authentication is disabled on the VPS and all Linux VMs. SSH access to internal hosts is restricted to the device mesh, not reachable through the public VPS.</p>
+							</div>
+						</div>
+					</section>
+
+				<!-- Tunnel -->
+					<section id="tunnel" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Home to VPS</span>
+							<h2>Outbound Tunnel</h2>
+							<p>The tunnel between the home network and the VPS is the backbone of the whole setup. It was chosen for its simplicity and the fact that it can be initiated outbound, which is essential when the home connection has no inbound port forwarding available.</p>
+
+							<div class="host-card">
+								<h4>Topology</h4>
+								<p>The firewall VM on host0 maintains a persistent outbound connection to the VPS. The VPS treats the home network as a routable subnet and forwards traffic into it through the tunnel. The connection recovers automatically if the home IP changes or the connection drops.</p>
+							</div>
+						</div>
+					</section>
+
+				<!-- Device mesh -->
+					<section id="mesh" class="wrapper style2 fade-up">
+						<div class="inner">
+							<span class="section-label">Device mesh</span>
+							<h2>Device Mesh</h2>
+							<p>The device mesh provides the personal access layer. It sits alongside the tunnel rather than replacing it: the tunnel handles public service traffic, while the mesh handles direct device-to-LAN access.</p>
+
+							<div class="host-card">
+								<h4>How it fits in</h4>
+								<p>The mesh provides direct access to the home network for authorised devices, with an encrypted connection that does not route through the public reverse proxy. Peer discovery and NAT traversal are handled automatically.</p>
+							</div>
+							<div class="host-card">
+								<h4>Connected nodes</h4>
+								<p>The mesh currently includes the VPS, the home network services host, the network management VM, and a separate remote node. All nodes run the same current stable release.</p>
+							</div>
+						</div>
+					</section>
+
+				<!-- Proxy and SSO -->
+					<section id="proxy" class="wrapper style3 fade-up">
+						<div class="inner">
+							<span class="section-label">Public access layer</span>
+							<h2>Reverse Proxy and SSO</h2>
+							<p>All public traffic enters through the reverse proxy on the VPS. It terminates TLS, applies security headers, and routes requests to the right service on the LAN through the tunnel. A self-hosted identity provider sits behind it and provides SSO for the entire service stack.</p>
+
+							<div class="host-card">
+								<h4>Reverse proxy</h4>
+								<p>The reverse proxy runs on the VPS and handles all inbound HTTPS. It manages TLS certificates automatically, applies a consistent set of security headers across all domains, and includes CalDAV and CardDAV redirects so native calendar and contacts clients work without any client-side configuration. A forward auth snippet is defined centrally so any service can be gated behind SSO with a single line.</p>
+							</div>
+							<div class="host-card">
+								<h4>Identity provider</h4>
+								<p>A self-hosted identity provider runs on the services VM and handles authentication for the whole stack. Public services use OIDC. Services that do not support OIDC natively are covered by the reverse proxy's forward auth integration, so the login experience is consistent regardless of what each service supports internally.</p>
+							</div>
 						</div>
 					</section>
 
