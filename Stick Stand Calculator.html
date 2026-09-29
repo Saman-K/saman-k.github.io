@@ -1,0 +1,1348 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Stick Stand Calculator</title>
+<link rel="shortcut icon" href="images/my%20head%2014.7x15%20icon%20XS.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column. Bike box (inputs + measuring guide) on top, then results: summary, cut list, drawings, compare, working. */
+:root {
+  /* Dark workshop. Gold tube, silver ferrule, grey head and foot, white shock cord. */
+  --paper: #111418;
+  --panel: #1a1e24;
+  --ink: #e9e6df;
+  --muted: #9a9ea6;
+  --line: #2e333b;
+  --alu: #b8913a;
+  --alu-edge: #e8c76e;
+  --fer: #c4cad2;
+  --fer-edge: #f1f3f6;
+  --fer-soft: #3a3f47;
+  --rubber: #767c85;
+  --cord: #f7f7f7;
+  --dykem: #e3b651;
+  --dykem-soft: #33291a;
+  --ok: #72cf98;
+  --ok-soft: #173325;
+  --warn: #f0b35a;
+  --warn-soft: #3a2a10;
+  --err: #ff8a80;
+  --err-soft: #3d1a18;
+  --f-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --f-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--paper); color: var(--ink); font: 15px/1.5 var(--f-body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 48px; }
+a { color: var(--dykem); }
+
+header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; padding-bottom: 14px; border-bottom: 2px solid var(--ink); margin-bottom: 20px; }
+header.top h1 { font: 700 2.1rem/1 var(--f-display); letter-spacing: .01em; margin: 0; text-transform: uppercase; text-wrap: balance; }
+header.top p { margin: 6px 0 0; color: var(--muted); max-width: 66ch; }
+header.top h1 span { color: var(--muted); font-weight: 600; }
+.brand-tag { font: 700 .85rem/1 var(--f-display); text-transform: uppercase; letter-spacing: .14em; color: var(--dykem); margin-top: 8px; }
+.hdr-r { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.hdr-r a { font-weight: 600; font-size: .9rem; }
+.sheetno { font: 500 .75rem/1.3 var(--f-data); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+
+/* bike box */
+.bikeband { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px 28px; padding: 18px; margin-bottom: 20px; align-items: start; }
+@media (max-width: 760px) { .bikeband { grid-template-columns: minmax(0, 1fr); } .bb-art { justify-self: stretch; order: -1; max-width: none; } }
+.bb-in { min-width: 0; display: flex; flex-direction: column; }
+.bb-art { display: flex; flex-direction: column; gap: 8px; min-width: 0; max-width: 480px; justify-self: end; width: 100%; }
+.inputs { display: flex; flex-direction: column; gap: 18px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+
+fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+legend { font: 700 .95rem/1 var(--f-display); text-transform: uppercase; letter-spacing: .08em; color: var(--dykem); padding: 0 0 8px; }
+.field { display: grid; grid-template-columns: minmax(0, 1fr) 118px; align-items: center; gap: 4px 10px; }
+.field label, .field .lbl { font-weight: 500; font-size: .92rem; line-height: 1.25; }
+.field.wide > :nth-child(2) { grid-column: 1 / -1; }
+.field small, fieldset > small { grid-column: 1 / -1; color: var(--muted); font-size: .8rem; line-height: 1.35; }
+
+.num { position: relative; }
+.num input { width: 100%; font: 500 .95rem var(--f-data); font-variant-numeric: tabular-nums; padding: 6px 30px 6px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink); text-align: right; }
+.num input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible, .seg input:focus-visible + span, .toggle input:focus-visible + span { outline: 2px solid var(--dykem); outline-offset: 1px; }
+.num .u { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font: .75rem var(--f-data); color: var(--muted); pointer-events: none; }
+.num input[aria-invalid="true"] { border-color: var(--err); background: var(--err-soft); }
+#bike { font-size: 1.9rem; padding-block: 10px; padding-right: 48px; border-color: var(--dykem); border-width: 2px; }
+.num.big .u { font-size: .95rem; right: 14px; }
+.biglabel { font: 700 1.35rem/1.1 var(--f-display); text-transform: uppercase; letter-spacing: .03em; }
+.bighelp { color: var(--muted); font-size: .84rem; }
+select { width: 100%; font: 500 .9rem var(--f-data); padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink); }
+
+.stepper { display: grid; grid-template-columns: 30px minmax(0, 1fr) 30px; gap: 4px; }
+.stepper button { font: 600 1.1rem var(--f-data); border: 1px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 4px; cursor: pointer; }
+.stepper button:hover { border-color: var(--dykem); }
+.stepper .num input { padding: 6px 2px; text-align: center; }
+
+.seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg label { position: relative; cursor: pointer; }
+.seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seg span { display: block; text-align: center; padding: 7px 6px; font-weight: 600; font-size: .88rem; color: var(--muted); background: var(--paper); }
+.seg label + label span { border-left: 1px solid var(--line); }
+.seg input:checked + span { background: var(--dykem); color: var(--panel); }
+
+.toggle { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-weight: 500; font-size: .92rem; line-height: 1.3; position: relative; }
+.toggle input { position: absolute; opacity: 0; width: 38px; height: 22px; margin: 0; cursor: pointer; z-index: 1; }
+.toggle span.sw { flex: none; width: 38px; height: 22px; border-radius: 11px; background: var(--paper); border: 1px solid var(--line); position: relative; }
+.toggle span.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--muted); transition: left .15s; }
+.toggle input:checked + span.sw { background: var(--dykem-soft); border-color: var(--dykem); }
+.toggle input:checked + span.sw::after { left: 18px; background: var(--dykem); }
+.diybox { display: flex; flex-direction: column; gap: 10px; padding: 12px; border: 1px dashed var(--line); border-radius: 4px; }
+
+details.adv { border-top: 1px solid var(--line); padding-top: 12px; }
+details.adv summary { cursor: pointer; font: 700 .95rem/1 var(--f-display); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+details.adv[open] summary { color: var(--dykem); }
+.advbody { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 32px; align-items: start; margin-top: 14px; }
+.advbody .full { grid-column: 1 / -1; }
+.angleout { font: 500 .9rem var(--f-data); color: var(--dykem); }
+#reset { align-self: flex-start; }
+
+/* measuring guide */
+.bmtabs { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.bmtabs button { font: 600 .84rem var(--f-body); padding: 7px 6px; border: 0; background: var(--panel); color: var(--muted); cursor: pointer; }
+.bmtabs button + button { border-left: 1px solid var(--line); }
+.bmtabs button[aria-selected="true"] { background: var(--dykem); color: var(--panel); }
+.bmpanel { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 4px; }
+.bikeart { display: block; width: 100%; height: auto; }
+.bmcap { margin: 4px 4px 2px; color: var(--muted); font-size: .8rem; }
+.bikeart .bm-ground { stroke: var(--muted); stroke-width: 2; }
+.bikeart .bm-wheel { fill: none; stroke: var(--muted); stroke-width: 3; }
+.bikeart .bm-wheel.fat { stroke-width: 6; }
+.bikeart .bm-hub { fill: var(--muted); }
+.bikeart .bm-frame { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
+.bikeart .bm-frame.thin { stroke-width: 3; }
+.bikeart .bm-bb { fill: var(--panel); stroke: var(--ink); stroke-width: 2.5; }
+.bikeart .bm-crown { fill: var(--ink); opacity: .85; }
+.bikeart .bm-stanch { stroke: var(--fer); stroke-width: 5; stroke-linecap: round; }
+.bikeart .bm-lower { stroke: var(--rubber); stroke-width: 7; stroke-linecap: round; }
+.bikeart .bm-rocker { fill: var(--ink); opacity: .85; }
+.bikeart .bm-pivot { fill: var(--panel); stroke: var(--ink); stroke-width: 2; }
+.bikeart .bm-shockbody { fill: var(--rubber); }
+.bikeart .bm-shaft, .bikeart .bm-collar { fill: var(--fer); }
+.bikeart .bm-eye { fill: var(--panel); stroke: var(--ink); stroke-width: 2; }
+.bikeart .bm-coil line { stroke: var(--warn); stroke-width: 2.4; stroke-linecap: round; }
+.bikeart .bm-coil.back line { stroke-width: 1.6; opacity: .45; }
+.bikeart .bm-cp { fill: var(--dykem); stroke: var(--panel); stroke-width: 1.5; }
+.bikeart .bm-dim { stroke: var(--dykem); stroke-width: 1.6; }
+.bikeart .bm-ah { fill: var(--dykem); }
+.bikeart .bm-dimt { fill: var(--dykem); font: 600 11px var(--f-body); }
+.bikeart .bm-lbl { fill: var(--dykem); font: 600 12px var(--f-body); }
+.bikeart .bm-lead { stroke: var(--dykem); stroke-width: 1; }
+.bikeart .bm-note { fill: var(--muted); font: 12px var(--f-body); text-anchor: middle; }
+details.howto { border: 1px solid var(--line); border-radius: 4px; background: var(--paper); }
+details.howto summary { cursor: pointer; padding: 8px 10px; font-weight: 600; font-size: .9rem; color: var(--dykem); }
+.howbody { padding: 0 12px 10px; display: flex; flex-direction: column; gap: 8px; font-size: .86rem; line-height: 1.45; }
+.howbody p { margin: 0; }
+.howtip { color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; }
+
+/* buttons */
+.btn { font: 600 .9rem var(--f-body); padding: 9px 14px; border-radius: 4px; border: 1px solid var(--dykem); cursor: pointer; background: var(--panel); color: var(--dykem); text-decoration: none; display: inline-block; }
+.btn.primary { background: var(--dykem); color: var(--panel); }
+.btn:hover { filter: brightness(1.08); }
+.btn.link { border: 0; background: none; padding: 0; color: var(--muted); font-weight: 500; text-decoration: underline; font-size: .82rem; }
+
+/* results */
+main.results { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+section.card { padding: 18px; min-width: 0; }
+h2 { font: 700 1.25rem/1.1 var(--f-display); text-transform: uppercase; letter-spacing: .05em; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 14px; font-size: .9rem; max-width: 76ch; }
+
+.summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 6px; background: var(--panel); overflow: hidden; }
+.summary > div { padding: 14px 16px; border-left: 1px solid var(--line); min-width: 0; }
+.summary > div:first-child { border-left: 0; background: var(--dykem-soft); }
+.summary .k { font: 600 .72rem/1.2 var(--f-body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.summary .v { font: 500 1.6rem/1.2 var(--f-data); font-variant-numeric: tabular-nums; margin-top: 4px; }
+.summary .v small { font-size: .8rem; color: var(--muted); margin-left: 3px; }
+.summary .n { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+@media (max-width: 700px) { .summary { grid-template-columns: 1fr 1fr; } .summary > div:nth-child(3) { border-left: 0; } .summary > div:nth-child(n+3) { border-top: 1px solid var(--line); } }
+
+.msgs:empty { display: none; }
+.msgs { display: flex; flex-direction: column; gap: 8px; }
+.msg { padding: 10px 12px; border-radius: 4px; font-size: .9rem; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; border: 1px solid transparent; }
+.msg b { font-weight: 600; }
+.msg.err { background: var(--err-soft); color: var(--err); border-color: var(--err); }
+.msg.warn { background: var(--warn-soft); color: var(--warn); border-color: var(--warn); }
+.msg .fix { font: 600 .82rem var(--f-body); padding: 4px 10px; border-radius: 3px; border: 1px solid currentColor; background: var(--panel); color: inherit; cursor: pointer; }
+
+.callout { border: 1px solid var(--dykem); background: var(--dykem-soft); border-radius: 4px; padding: 10px 12px; font-size: .92rem; margin: 0 0 14px; }
+.callout b { color: var(--dykem); }
+.callout.quiet { border-color: var(--line); background: var(--paper); margin: 14px 0 0; }
+
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+#cmpTable { min-width: 0; }
+.cutcards { display: none; }
+.cutcard { border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: baseline; background: var(--paper); }
+.cutcard .cn { font-weight: 600; }
+.cutcard .cq { font: 500 .85rem var(--f-data); color: var(--dykem); }
+.cutcard .cl { grid-column: 2; grid-row: 1 / span 2; font: 500 1.7rem/1 var(--f-data); color: var(--dykem); text-align: right; align-self: center; }
+.cutcard .cl small { font-size: .8rem; color: var(--muted); margin-left: 2px; }
+.cutcard .cnote { grid-column: 1 / -1; color: var(--muted); font-size: .84rem; margin-top: 4px; }
+.cutcard .cnote b, td .note b { color: var(--ink); }
+.pwide { display: block; } .pnarrow { display: none; }
+.drawing.fit svg { min-width: 0; }
+@media (max-width: 640px) {
+  .tablewrap.cut { display: none; }
+  .cutcards { display: flex; flex-direction: column; gap: 8px; }
+  .pwide { display: none; } .pnarrow { display: block; }
+  #cmpTable .hm { display: none; }
+  .drawing svg { min-width: 560px; }
+}
+#cutTable { min-width: 620px; }
+#cutTable td:last-child { min-width: 240px; }
+.prompt { color: var(--muted); margin: 0; }
+.printtip { color: var(--muted); font-size: .8rem; margin: 8px 0 0; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 .72rem/1.2 var(--f-body); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); border-bottom: 2px solid var(--ink); }
+td.mm, th.mm, td.q, th.q { text-align: right; font-family: var(--f-data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.mm { font-weight: 500; }
+td .note { color: var(--muted); font-size: .84rem; }
+td.mm.big { font-size: 1.02rem; color: var(--dykem); }
+tr.cur td { background: var(--dykem-soft); }
+tr.pick { cursor: pointer; }
+tr.pick:hover td { background: var(--paper); }
+tr.pick.cur:hover td { background: var(--dykem-soft); }
+.chip { display: inline-block; font: 600 .72rem/1 var(--f-body); letter-spacing: .04em; text-transform: uppercase; padding: 4px 7px; border-radius: 3px; white-space: nowrap; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.bad { background: var(--err-soft); color: var(--err); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
+.actions .hint { color: var(--muted); font-size: .82rem; }
+.stock { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+.stock > div { border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; min-width: 0; }
+.stock .k { font: 600 .72rem/1.2 var(--f-body); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.stock .v { font: 500 1.05rem var(--f-data); margin-top: 3px; }
+.stock .n { font-size: .8rem; color: var(--muted); }
+
+.drawing { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+.drawing svg { display: block; width: 100%; min-width: 680px; height: auto; }
+.drawings { display: flex; flex-direction: column; gap: 14px; }
+.dlabel { font: 700 .85rem/1 var(--f-display); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 16px 0 6px; }
+.drawings .dlabel { margin-top: 4px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .8rem; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 18px; height: 10px; vertical-align: -1px; margin-right: 5px; border-radius: 2px; }
+
+details.formula summary { cursor: pointer; font-weight: 600; color: var(--dykem); }
+details.formula pre { font: .85rem/1.6 var(--f-data); background: var(--paper); padding: 12px; border-radius: 4px; overflow-x: auto; margin: 10px 0 0; white-space: pre; }
+
+#printSheet { display: none; }
+@media print {
+  :root { --paper: #fff; --panel: #fff; --ink: #000; --muted: #444; --line: #999; --alu: #e2c06a; --alu-edge: #7a5a14; --fer: #c4cad2; --fer-edge: #555; --fer-soft: #eef0f3; --rubber: #8a8f96; --cord: #9a9a9a; --dykem: #7a5a14; --dykem-soft: #f6ecd2; color-scheme: light; }
+  body { background: #fff; color: #000; }
+  .wrap > *:not(#printSheet) { display: none !important; }
+  #printSheet { display: block; }
+}
+@media (prefers-reduced-motion: reduce) { .toggle span.sw::after { transition: none; } }
+</style>
+
+<style id="svgcss">
+.sv .tube { fill: var(--alu); stroke: var(--alu-edge); stroke-width: 1.2; }
+.sv .wall { fill: var(--alu); stroke: var(--alu-edge); stroke-width: 1; }
+.sv .rubber { fill: var(--rubber); }
+.sv .arm { fill: none; stroke: var(--rubber); stroke-width: 7; stroke-linecap: round; }
+.sv .fer { fill: var(--fer); stroke: var(--fer-edge); stroke-width: .8; }
+.sv .ferwall { fill: var(--fer); stroke: var(--fer-edge); stroke-width: .8; }
+.sv .ferhid { fill: none; stroke: var(--fer); stroke-width: 1.4; stroke-dasharray: 5 3; }
+.sv .ghost { fill: none; stroke: var(--fer); stroke-width: 1.2; stroke-dasharray: 4 4; opacity: .4; }
+.sv .sleeve { fill: var(--fer); fill-opacity: .55; stroke: var(--fer-edge); stroke-width: 1.4; }
+.sv .ins { fill: var(--fer-soft); stroke: var(--fer); stroke-width: 1.2; stroke-dasharray: 5 3; }
+.sv .dim { stroke: var(--muted); stroke-width: 1; fill: none; }
+.sv .ext { stroke: var(--muted); stroke-width: .8; stroke-dasharray: 2 3; fill: none; }
+.sv .cl { stroke: var(--muted); stroke-width: .8; stroke-dasharray: 14 4 2 4; fill: none; }
+.sv .cutline { stroke: var(--dykem); stroke-width: 1.6; stroke-dasharray: 4 3; fill: none; }
+.sv .scis { stroke: var(--dykem); stroke-width: 1.6; fill: none; stroke-linecap: round; }
+.sv .cord { stroke: var(--cord); stroke-width: 2.4; fill: none; }
+.sv .ah { fill: var(--muted); }
+.sv text { font-family: var(--f-body); fill: var(--ink); font-size: 14px; }
+.sv .t-b { font-weight: 600; }
+.sv .t-m { fill: var(--muted); font-size: 12.5px; }
+.sv .t-d { font-family: var(--f-data); font-size: 13.5px; }
+.sv .t-dk { font-family: var(--f-data); font-size: 14px; fill: var(--dykem); font-weight: 500; }
+.sv .t-big { font-family: var(--f-data); font-size: 18px; fill: var(--dykem); font-weight: 500; }
+.sv .t-cut { fill: var(--dykem); font-size: 12.5px; font-weight: 600; }
+.sv .t-h { font-family: var(--f-display); font-weight: 700; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; fill: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Stick Stand <span>Calculator</span></h1>
+      <div class="brand-tag">The folding bike stand</div>
+      <p>Turn a tent pole into a Stick Stand. Enter one measurement from your bike and get the length to cut each pole section, so every piece folds to the same length. The 3D-printed head and foot fit 8.5 mm poles.</p>
+    </div>
+    <div class="hdr-r">
+      <a class="plink" href="#" target="_blank" rel="noopener">3D files on Printables ↗</a>
+      <div class="sheetno">All dimensions in mm</div>
+    </div>
+  </header>
+
+  <section class="bikeband panel" aria-label="Your bike and stand">
+    <div class="bb-in">
+      <fieldset>
+        <legend>Your bike</legend>
+        <label for="bike" class="biglabel">Contact height</label>
+        <div class="num big"><input id="bike" type="number" inputmode="decimal" step="1" min="300" max="1500" placeholder="e.g. 680"><span class="u">mm</span></div>
+        <small class="bighelp">With the bike upright, measure from the ground straight up to the point where the stand will touch your bike.</small>
+      </fieldset>
+
+      <div class="inputs">
+        <fieldset>
+          <legend id="poleLegend">Tent pole</legend>
+          <div class="field" id="secLenField">
+            <label for="secLen">Length of one section</label>
+            <div class="num"><input id="secLen" type="number" inputmode="decimal" step="1" min="50"><span class="u">mm</span></div>
+            <small>Tube only. Measure from the open end to where the ferrule comes out.</small>
+          </div>
+          <div class="field">
+            <label for="fer">Ferrule sticks out</label>
+            <div class="num"><input id="fer" type="number" inputmode="decimal" step="1" min="10"><span class="u">mm</span></div>
+            <small>How far the ferrule sticks out of the end of a section.</small>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Stand</legend>
+          <div class="field">
+            <label for="n">Number of sections</label>
+            <div class="stepper">
+              <button type="button" id="nDown" aria-label="Fewer sections">−</button>
+              <div class="num"><input id="n" type="number" inputmode="numeric" step="1" min="2" max="8"></div>
+              <button type="button" id="nUp" aria-label="More sections">+</button>
+            </div>
+            <small>More sections fold shorter but add weight and joints. 4 or 5 suits most bikes.</small>
+          </div>
+        </fieldset>
+
+        <details class="adv" id="adv">
+          <summary>Advanced settings</summary>
+          <div class="advbody">
+            <fieldset>
+              <legend>Head and foot</legend>
+              <div class="field">
+                <label for="head">Head adds</label>
+                <div class="num"><input id="head" type="number" inputmode="decimal" step="0.5" min="0"><span class="u">mm</span></div>
+                <small>From the end of the tube to the bottom of the head's curve, where the bike's tube rests.</small>
+              </div>
+              <div class="field">
+                <label for="foot">Foot adds</label>
+                <div class="num"><input id="foot" type="number" inputmode="decimal" step="0.5" min="0"><span class="u">mm</span></div>
+                <small>From the end of the tube to the ground.</small>
+              </div>
+              <small>Only change these if you use a different head or foot.</small>
+            </fieldset>
+
+            <fieldset>
+              <legend>Stand angle</legend>
+              <div class="field">
+                <label for="angle">Angle from vertical</label>
+                <div class="num"><input id="angle" type="number" inputmode="decimal" step="0.5" min="0" max="45"><span class="u">°</span></div>
+                <small>The stand leans out from the bike, so it needs to be a little longer than the contact height. The default is 15°.</small>
+              </div>
+              <div class="angleout" id="angleOut" aria-live="polite"></div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Rounding</legend>
+              <div class="field">
+                <label for="round">Round cut lengths to</label>
+                <select id="round">
+                  <option value="0.1">0.1 mm</option>
+                  <option value="0.5">0.5 mm</option>
+                  <option value="1">1 mm</option>
+                </select>
+                <small>Round to what your tools can cut. Every section is rounded the same way, so they all fold to the same length.</small>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Ferrule depth</legend>
+              <div class="field">
+                <label for="ins" id="insLbl">How deep the ferrule goes into its tube</label>
+                <div class="num"><input id="ins" type="number" inputmode="decimal" step="1" min="0"><span class="u">mm</span></div>
+                <small id="insHelp"></small>
+              </div>
+            </fieldset>
+
+            <fieldset class="full">
+              <legend>Home-made ferrules</legend>
+              <label class="toggle"><input type="checkbox" id="diy"><span class="sw" aria-hidden="true"></span><span>I'm making my own ferrules from plain tube</span></label>
+              <div class="diybox" id="diyBox" hidden>
+                <div class="field wide">
+                  <span class="lbl" id="mountLbl">Ferrule fits</span>
+                  <div class="seg" role="radiogroup" aria-labelledby="mountLbl">
+                    <label><input type="radio" name="mount" id="mountIn" value="inside" checked><span>Inside the tube</span></label>
+                    <label><input type="radio" name="mount" id="mountOut" value="outside"><span>Over the tube</span></label>
+                  </div>
+                  <small id="mountHelp"></small>
+                </div>
+                <div class="field">
+                  <label for="tOD">Tube outer diameter</label>
+                  <div class="num"><input id="tOD" type="number" inputmode="decimal" step="0.1" min="1"><span class="u">mm</span></div>
+                </div>
+                <div class="field">
+                  <label for="tID">Tube inner diameter</label>
+                  <div class="num"><input id="tID" type="number" inputmode="decimal" step="0.1" min="0"><span class="u">mm</span></div>
+                  <small>Only sets the ferrule size. Cut lengths don't change.</small>
+                </div>
+                <div class="field">
+                  <label for="kerf">Saw kerf per cut</label>
+                  <div class="num"><input id="kerf" type="number" inputmode="decimal" step="0.5" min="0"><span class="u">mm</span></div>
+                  <small>Used for the stock totals.</small>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </details>
+
+        <button type="button" class="btn link" id="reset">Reset to defaults</button>
+      </div>
+    </div>
+
+    <div class="bb-art">
+      <div class="bmtabs" role="tablist" aria-label="Bike type">
+        <button type="button" role="tab" id="tabClassic" aria-selected="true" aria-controls="panClassic">Most bikes</button>
+        <button type="button" role="tab" id="tabMtb" aria-selected="false" aria-controls="panMtb" tabindex="-1">Full suspension</button>
+      </div>
+      <div class="bmpanel" role="tabpanel" id="panClassic" aria-labelledby="tabClassic">
+    <svg class="bikeart" viewBox="0 0 360 262" role="img" aria-label="Classic frame bike: measure from the underside of the top tube, next to the seat tube, straight down to the ground">
+      <defs><marker id="bmA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L10,5 L0,9 z" class="bm-ah"/></marker></defs>
+      <line x1="6" y1="230" x2="354" y2="230" class="bm-ground"/>
+      <circle cx="78" cy="172" r="56" class="bm-wheel"/><circle cx="78" cy="172" r="4" class="bm-hub"/>
+      <circle cx="282" cy="172" r="56" class="bm-wheel"/><circle cx="282" cy="172" r="4" class="bm-hub"/>
+      <path class="bm-frame" d="M160 180 L141 74 M144 82 L258 80 M160 180 L262 104 M258 76 L264 108"/>
+      <path class="bm-frame" d="M160 180 L78 172"/><path class="bm-frame" d="M78 172 L145 88"/>
+      <path class="bm-frame thin" d="M264 106 Q270 140 282 172"/>
+      <path class="bm-frame thin" d="M141 74 L138 56 M124 53 L152 52 M258 76 L262 64 L278 64 Q292 66 288 80 Q284 90 276 88"/>
+      <circle cx="160" cy="180" r="8" class="bm-bb"/>
+      <circle cx="155" cy="86" r="4.5" class="bm-cp"/>
+      <line x1="155" y1="92" x2="155" y2="229" class="bm-dim" marker-start="url(#bmA)" marker-end="url(#bmA)"/>
+      <text class="bm-dimt" transform="translate(148 160.5) rotate(-90)" text-anchor="middle">contact height</text>
+      <text class="bm-lbl" x="138" y="100" text-anchor="end">contact point</text>
+      <line x1="140" y1="97" x2="151" y2="89" class="bm-lead"/>
+      <text class="bm-note" x="180" y="252">Bike upright, not leaning</text>
+    </svg>
+      </div>
+      <div class="bmpanel" role="tabpanel" id="panMtb" aria-labelledby="tabMtb" hidden>
+    <svg class="bikeart" viewBox="0 0 360 262" role="img" aria-label="Full-suspension mountain bike: measure from the underside of the seat stays at the top of the rear triangle, straight down to the ground">
+      <defs><marker id="bmB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L10,5 L0,9 z" class="bm-ah"/></marker></defs>
+      <line x1="6" y1="230" x2="354" y2="230" class="bm-ground"/>
+      <circle cx="80" cy="170" r="58" class="bm-wheel fat"/><circle cx="80" cy="170" r="4" class="bm-hub"/>
+      <circle cx="294" cy="170" r="58" class="bm-wheel fat"/><circle cx="294" cy="170" r="4" class="bm-hub"/>
+      <path class="bm-frame" d="M166 178 L146 84 M148 94 L250 76 M166 178 L257 94 M249 72 L260 96"/>
+      <path class="bm-frame" d="M172 168 L80 170 L158 118"/>
+      <path class="bm-frame thin" d="M146 84 L139 52 M126 49 L154 48 M249 72 L253 62 M236 60 L274 60"/>
+      <polygon points="150,103 167,108 158,119" class="bm-rocker"/>
+      <circle cx="172" cy="168" r="3.5" class="bm-pivot"/>
+      <rect x="251" y="95" width="19" height="7" rx="2" class="bm-crown"/>
+      <line x1="261" y1="100" x2="273" y2="126" class="bm-stanch"/>
+      <line x1="273" y1="126" x2="294" y2="170" class="bm-lower"/>
+      <g transform="translate(166 108) rotate(25.2)">
+        <rect x="4" y="-5" width="30" height="10" rx="2" class="bm-shockbody"/>
+        <rect x="32" y="-2.5" width="20" height="5" rx="1" class="bm-shaft"/>
+        <g class="bm-coil back"><line x1="16" y1="8" x2="16" y2="-8"/><line x1="21" y1="8" x2="21" y2="-8"/><line x1="26" y1="8" x2="26" y2="-8"/><line x1="31" y1="8" x2="31" y2="-8"/><line x1="36" y1="8" x2="36" y2="-8"/><line x1="41" y1="8" x2="41" y2="-8"/><line x1="46" y1="8" x2="46" y2="-8"/></g>
+        <rect x="7" y="-9.5" width="3.5" height="19" rx="1" class="bm-collar"/>
+        <rect x="46" y="-9.5" width="3.5" height="19" rx="1" class="bm-collar"/>
+        <g class="bm-coil"><line x1="11" y1="-8" x2="16" y2="8"/><line x1="16" y1="-8" x2="21" y2="8"/><line x1="21" y1="-8" x2="26" y2="8"/><line x1="26" y1="-8" x2="31" y2="8"/><line x1="31" y1="-8" x2="36" y2="8"/><line x1="36" y1="-8" x2="41" y2="8"/><line x1="41" y1="-8" x2="46" y2="8"/></g>
+        <circle cx="0" cy="0" r="3.5" class="bm-eye"/><circle cx="55" cy="0" r="3.5" class="bm-eye"/>
+      </g>
+      <circle cx="166" cy="178" r="8" class="bm-bb"/>
+      <circle cx="146" cy="128.5" r="4.5" class="bm-cp"/>
+      <line x1="146" y1="134" x2="146" y2="229" class="bm-dim" marker-start="url(#bmB)" marker-end="url(#bmB)"/>
+      <text class="bm-dimt" x="153" y="216">contact height</text>
+      <text class="bm-lbl" x="130" y="98" text-anchor="end">contact point</text>
+      <line x1="131" y1="101" x2="142" y2="124" class="bm-lead"/>
+      <text class="bm-note" x="180" y="252">Suspension unloaded, no rider</text>
+    </svg>
+        <p class="bmcap">On a full-suspension bike the shock usually blocks the top tube corner, so the stand rests on the top of the rear triangle, under the seat stays.</p>
+      </div>
+      <details class="howto" id="howto">
+        <summary>How to measure your bike</summary>
+        <div class="howbody">
+          <p><b>1. Find the contact point.</b> This is where the stand will touch your bike. On most bikes it's the underside of the top tube, close to where it meets the seat tube. On a full-suspension bike it's usually the top of the rear triangle, under the seat stays. Measure the one you plan to use.</p>
+          <p><b>2. Stand the bike upright.</b> It must be vertical, not leaning. Get someone to hold it, or rest it against a wall with both wheels square to the floor. Don't lean the bike and guess where the stand will meet the ground.</p>
+          <p><b>3. Measure straight down.</b> Measure from the contact point straight down to the ground, in millimetres. The chain stays get in the way, so take your time and measure more than once.</p>
+          <p><b>4. Type it in.</b> Enter it as the contact height. The calculator adds a little length for the stand's angle, then works out the length of every section.</p>
+          <p class="howtip">Being a few millimetres out won't matter. The stand still works.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <main class="results">
+    <div id="summary" class="summary" aria-live="polite"></div>
+    <div id="msgs" class="msgs" aria-live="polite"></div>
+
+    <section class="card panel">
+      <h2>Cut list</h2>
+      <p class="prompt" id="cutPrompt">Enter your contact height above to see your cut list.</p>
+      <div id="cutCard">
+      <p class="callout" id="tubeOnly"></p>
+      <div class="tablewrap cut"><table id="cutTable"></table></div>
+      <div class="cutcards" id="cutCards"></div>
+      <div class="dlabel">Parts to cut</div>
+      <div class="drawing fit pwide" id="dParts"></div>
+      <div class="drawing fit pnarrow" id="dPartsN"></div>
+      <div class="stock" id="stock"></div>
+      <div class="actions">
+        <button type="button" class="btn primary" id="printBtn">Print cut sheet</button>
+        <button type="button" class="btn" id="copyBtn">Copy cut list</button>
+        <a class="btn plink" href="#" target="_blank" rel="noopener">Get the head &amp; foot on Printables ↗</a>
+        <span class="hint" id="actHint"></span>
+      </div>
+      <p class="printtip">Printing tip: if your browser adds a header or footer, turn it off in the print settings.</p>
+      <p class="callout quiet"><b>Before you use it:</b> hold the front brake on, for example with a strap or rubber band around the lever, so the bike can't roll off the stand.</p>
+      </div>
+    </section>
+
+    <section class="card panel">
+      <h2>Drawings</h2>
+      <p class="sub">Not to scale.</p>
+      <div class="drawings">
+        <div><div class="dlabel">Folded, every section the same length</div><div class="drawing" id="dFold"></div></div>
+        <div><div class="dlabel">Assembled</div><div class="drawing" id="dUnfold"></div></div>
+        <div id="jointWrap" hidden><div class="dlabel">Joint detail</div><div class="drawing" id="dJoint"></div></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--alu);border:1px solid var(--alu-edge)"></i>Tube</span>
+        <span><i style="background:var(--fer);border:1px solid var(--fer-edge)"></i>Ferrule</span>
+        <span><i style="background:var(--fer-soft);border:1px dashed var(--fer)"></i>Ferrule, hidden inside a tube</span>
+        <span><i style="background:var(--rubber)"></i>Head and foot</span>
+      </div>
+    </section>
+
+    <section class="card panel">
+      <h2>Compare section counts</h2>
+      <p class="sub">More sections fold shorter, but each extra section adds one more ferrule, so the stand gets a little heavier and has one more joint. The amount of tube stays the same. Tap a row to use it.</p>
+      <div class="tablewrap"><table id="cmpTable"></table></div>
+    </section>
+
+    <section class="card panel">
+      <details class="formula">
+        <summary>How the lengths are worked out</summary>
+        <pre id="formula"></pre>
+      </details>
+    </section>
+  </main>
+
+  <div id="printSheet"></div>
+</div>
+
+<script>
+/* qrcode-generator 1.4.4 · Kazuhiko Arase · MIT licence · https://github.com/kazuhikoarase/qrcode-generator */
+var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(n*r,o*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});
+</script>
+<script>
+(() => {
+  // Change this one line when the model page is published.
+  const PRINTABLES_URL = 'https://www.printables.com/@SK_4385638';
+  // Fill in once the calculator is hosted. The cut sheet then gets a second QR code that reopens it with the same numbers.
+  const CALCULATOR_URL = 'https://example.com'; // TODO: placeholder, replace with the real address before sharing
+
+  const DEFAULTS = { bike: '', angle: 15, n: 4, head: 15, foot: 15, secLen: 350, fer: 40, ins: 35, tOD: 8.5, tID: 7, kerf: 2, round: '0.1', mount: 'inside', diy: false };
+  const NUM_KEYS = ['bike', 'angle', 'n', 'head', 'foot', 'secLen', 'fer', 'ins', 'tOD', 'tID', 'kerf'];
+  const ADV_KEYS = ['angle', 'head', 'foot', 'ins', 'tOD', 'tID', 'kerf'];
+  const STORE = 'folding-stand-calc-v5';
+  const $ = (id) => document.getElementById(id);
+  const EPS = 1e-6;
+
+  document.querySelectorAll('a.plink').forEach(a => { a.href = PRINTABLES_URL; });
+
+  // ---------- state ----------
+  function load() {
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(STORE) || 'null'); } catch (e) { saved = null; }
+    const s = Object.assign({}, DEFAULTS, saved || {});
+    NUM_KEYS.forEach(k => { $(k).value = s[k]; });
+    $('round').value = s.round;
+    (s.mount === 'outside' ? $('mountOut') : $('mountIn')).checked = true;
+    $('diy').checked = !!s.diy;
+  }
+  function save() {
+    const s = {};
+    NUM_KEYS.forEach(k => { s[k] = $(k).value; });
+    s.round = $('round').value;
+    s.mount = document.querySelector('input[name=mount]:checked').value;
+    s.diy = $('diy').checked;
+    try { localStorage.setItem(STORE, JSON.stringify(s)); } catch (e) { /* storage not available */ }
+  }
+  function read() {
+    const p = {};
+    NUM_KEYS.forEach(k => { const v = $(k).value.trim(); p[k] = v === '' ? NaN : parseFloat(v); });
+    p.diy = $('diy').checked;
+    p.mount = p.diy ? document.querySelector('input[name=mount]:checked').value : 'inside';
+    p.step = parseFloat($('round').value);
+    p.ratio = 1 / Math.cos(p.angle * Math.PI / 180);
+    p.lean = p.bike * p.ratio - p.bike;
+    return p;
+  }
+
+  // ---------- maths ----------
+  // Every piece folds to the same length F; each tube is F minus whatever sticks out of it.
+  function solve(p, n) {
+    const L = p.bike * p.ratio;
+    const F = (L + (n - 1) * p.fer) / n;
+    return { L, F, top: F - p.head, mid: F - p.fer, bot: F - p.foot - p.fer };
+  }
+  function lensOf(s, n) { return n > 2 ? [['top', s.top], ['middle', s.mid], ['bottom', s.bot]] : [['top', s.top], ['bottom', s.bot]]; }
+  function checkN(p, n) {
+    const s = solve(p, n);
+    const min = p.fer + 10;
+    const lens = lensOf(s, n);
+    const shortest = lens.reduce((a, b) => (b[1] < a[1] ? b : a));
+    const tooShort = shortest[1] < min - EPS;
+    // pole sections: middle and bottom must come from a section with a ferrule; the top can come from a longer plain tube
+    const others = lens.filter(l => l[0] !== 'top');
+    const longOther = others.reduce((a, b) => (b[1] > a[1] ? b : a));
+    const tooLong = !p.diy && longOther[1] > p.secLen + EPS;
+    const topLong = !p.diy && s.top > p.secLen + EPS;
+    // a section with an inside ferrule holds its own ferrule at the top and the next one at the bottom
+    const inside = p.mount === 'inside';
+    const midClash = inside && n > 2 && (p.ins + p.fer > s.mid + EPS);
+    const botClash = inside && p.ins > s.bot + EPS;
+    const clash = midClash || botClash;
+    return { s, min, shortest, longOther, tooShort, tooLong, topLong, clash, midClash, botClash, ok: !tooShort && !tooLong && !topLong && !clash };
+  }
+  function pickN(p, pred, fromTop) {
+    const ks = fromTop ? [8, 7, 6, 5, 4, 3, 2] : [2, 3, 4, 5, 6, 7, 8];
+    for (const k of ks) if (pred(checkN(p, k), k)) return k;
+    return 0;
+  }
+  const roundTo = (x, step) => Math.round(x / step) * step;
+  function build(p) {
+    const n = p.n, s = solve(p, n), st = p.step, mids = n - 2;
+    // Round the folded length first, then take every tube from it, so all pieces fold to the same number.
+    const F = roundTo(s.F, st);
+    const topR = roundTo(F - p.head, st);
+    const midR = mids > 0 ? roundTo(F - p.fer, st) : 0;
+    const botR = roundTo(F - p.foot - p.fer, st);
+    const tubeTotal = topR + mids * midR + botR;
+    return {
+      n, L: s.L, F, raw: s, top: topR, mid: midR, bot: botR, mids, tubeTotal,
+      assembled: p.head + tubeTotal + p.foot,
+      secTop: p.head + topR, secMid: midR + p.fer, secBot: p.foot + botR + p.fer,
+      ferCut: p.fer + p.ins, ferQty: n - 1,
+      tubeStock: tubeTotal + p.kerf * n,
+      ferStock: (p.fer + p.ins) * (n - 1) + p.kerf * (n - 1),
+      cordLo: tubeTotal * 0.75, cordHi: tubeTotal * 0.8,
+    };
+  }
+
+  // ---------- formatting ----------
+  const dec = (st) => (st < 1 ? 1 : 0);
+  const f = (x, d) => { if (x == null || !isFinite(x)) return '—'; const t = x.toFixed(d); return d > 0 && /\.0+$/.test(t) ? t.replace(/\.0+$/, '') : t; };
+  const trim = (x) => (x == null || !isFinite(x)) ? '—' : String(Math.round(x * 100) / 100);
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const nOr4 = (p) => (Number.isInteger(p.n) && p.n >= 2 && p.n <= 8 ? p.n : 4);
+
+  // ---------- validation ----------
+  function validate(p) {
+    const errs = [], warns = [], bad = new Set();
+    const need = (k, cond, msg) => { if (!cond) { errs.push({ msg }); bad.add(k); } };
+    if (isNaN(p.bike)) return { empty: true, errs, warns, bad };
+    need('bike', p.bike >= 300 && p.bike <= 1500, 'Contact height should be between 300 and 1500 mm.');
+    need('angle', !isNaN(p.angle) && p.angle >= 0 && p.angle <= 45, 'Stand angle should be between 0° and 45°.');
+    need('n', Number.isInteger(p.n) && p.n >= 2 && p.n <= 8, 'Number of sections must be a whole number from 2 to 8.');
+    need('fer', !isNaN(p.fer) && p.fer >= 10, 'The ferrule must stick out at least 10 mm.');
+    need('head', !isNaN(p.head) && p.head >= 0, 'Head length can’t be negative.');
+    need('foot', !isNaN(p.foot) && p.foot >= 0, 'Foot length can’t be negative.');
+    if (!p.diy) need('secLen', !isNaN(p.secLen) && p.secLen >= 50, 'Enter the length of one pole section (tube only), at least 50 mm.');
+    need('ins', !isNaN(p.ins) && p.ins >= 0, p.diy ? 'Glued length can’t be negative.' : 'Ferrule depth can’t be negative.');
+    if (p.diy) {
+      need('kerf', !isNaN(p.kerf) && p.kerf >= 0, 'Saw kerf can’t be negative.');
+      need('tOD', !isNaN(p.tOD) && p.tOD > 0, 'Enter the tube outer diameter.');
+      need('tID', !isNaN(p.tID) && p.tID >= 0 && p.tID < p.tOD, 'Tube inner diameter must be smaller than its outer diameter.');
+    }
+    if (errs.length) return { empty: false, errs, warns, bad };
+
+    const dd = dec(p.step);
+    const c = checkN(p, p.n);
+    const useBtn = (k) => (k && k !== p.n ? { label: `Use ${k} sections`, set: { n: k } } : null);
+    if (c.tooShort) {
+      const best = pickN(p, (ck) => ck.ok, true) || pickN(p, (ck) => !ck.tooShort, true);
+      errs.push({
+        msg: `<b>The ${c.shortest[0]} section would be too short (${f(c.shortest[1], dd)} mm) to hold the ferrule.</b> ` +
+          (best ? `Use ${best} sections or fewer.` : 'Even 2 sections are too short for this ferrule.'),
+        fix: useBtn(best),
+      });
+      bad.add('n');
+    } else if (c.tooLong) {
+      const least = pickN(p, (ck) => ck.ok, false) || pickN(p, (ck) => !ck.tooLong && !ck.tooShort, false);
+      errs.push({
+        msg: `<b>The ${c.longOther[0]} section needs ${f(c.longOther[1], dd)} mm of tube, but your pole sections are only ${trim(p.secLen)} mm.</b> ` +
+          (least ? `Use at least ${least} sections.` : 'Even 8 sections need more tube than one pole section.'),
+        fix: useBtn(least),
+      });
+      bad.add('n');
+    } else if (c.topLong) {
+      const least = pickN(p, (ck) => ck.ok, false);
+      warns.push({
+        msg: `The top section needs ${f(c.s.top, dd)} mm of tube, but your pole sections are ${trim(p.secLen)} mm, so it might be too short. ` +
+          (least ? `Use ${least} or more sections, or cut the top section from a longer tube without a ferrule.` : 'Cut the top section from a longer tube without a ferrule.'),
+        fix: useBtn(least),
+      });
+    }
+    if (!c.tooShort && c.clash) {
+      const fewer = pickN(p, (ck, k) => ck.ok && k < p.n, true);
+      if (p.diy) {
+        const maxIns = Math.floor(Math.min(p.n > 2 ? c.s.mid - p.fer : Infinity, c.s.bot));
+        warns.push({
+          msg: c.midClash ? 'Middle sections are too short to hold both ferrules. Use fewer sections or a shorter glued length.'
+            : 'The bottom section is shorter than the glued length. Use fewer sections or a shorter glued length.',
+          fix: maxIns >= 10 ? { label: `Set glued length to ${maxIns} mm`, set: { ins: maxIns } } : useBtn(fewer),
+        });
+      } else {
+        warns.push({
+          msg: c.midClash
+            ? `Middle sections (${f(c.s.mid, dd)} mm) are too short to hold both ferrules: their own goes ${trim(p.ins)} mm in and the one from below goes ${trim(p.fer)} mm in. ` + (fewer ? `Use ${fewer} sections or fewer.` : 'Use fewer sections.')
+            : `The bottom section (${f(c.s.bot, dd)} mm) is shorter than its ferrule's depth (${trim(p.ins)} mm). Use fewer sections.`,
+          fix: useBtn(fewer),
+        });
+      }
+      bad.add('n');
+    }
+    if (p.diy && p.ins < 10) warns.push({ msg: 'A glued length under 10 mm gives very little to glue. 20–30 mm is typical.' });
+    return { empty: false, errs, warns, bad };
+  }
+
+  // ---------- SVG helpers ----------
+  let svgSeq = 0;
+  function svgOpen(w, h, label) {
+    const id = 'a' + (++svgSeq);
+    return { id, head: `<svg class="sv" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}" xmlns="http://www.w3.org/2000/svg"><defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,1 L10,5 L0,9 z"/></marker></defs>` };
+  }
+  const dimH = (id, x1, x2, y, text, cls = 't-d') => `<line class="dim" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" marker-start="url(#${id})" marker-end="url(#${id})"/><text class="${cls}" x="${(x1 + x2) / 2}" y="${y - 7}" text-anchor="middle">${text}</text>`;
+  const ext = (x, y1, y2) => `<line class="ext" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>`;
+  const scissors = (x, y) => `<g class="scis" transform="translate(${x} ${y})"><circle cx="-4.5" cy="6" r="3.2"/><circle cx="4.5" cy="6" r="3.2"/><line x1="-2.5" y1="3.5" x2="4" y2="-9"/><line x1="2.5" y1="3.5" x2="-4" y2="-9"/></g>`;
+  const tubeName = (i, n) => i === 0 ? 'Top' : (i === n - 1 ? 'Bottom' : 'Middle');
+
+  // Head: a stem like the foot with two arms that curve up into a third of a circle.
+  // xc = bottom of the curve (where the measurement starts), xt = tube end, R = half the arm span.
+  function headSVG(xc, xt, cy, R, h) {
+    const rho = 2 * R / Math.sqrt(3);
+    const sw = 7, xa = xc - sw / 2, cx = xa - rho, ro = rho + sw / 2, hs = h + 10, fl = h * 0.45;
+    const ex = cx + rho * 0.5;
+    const fillet = (dir) => {
+      const yc = cy + dir * hs / 2, y1 = yc + dir * fl;
+      const x1 = cx + Math.sqrt(Math.max(0, ro * ro - (y1 - cy) * (y1 - cy)));
+      return `<path class="rubber" d="M ${x1} ${y1} Q ${xc} ${yc} ${xc + fl} ${yc} L ${xc + fl} ${cy} L ${cx + ro - 0.5} ${cy} Z"/>`;
+    };
+    return `<rect class="rubber" x="${xc - 2}" y="${cy - hs / 2}" width="${xt - xc + 2}" height="${hs}" rx="${Math.min(10, hs / 2)}"/>` +
+      fillet(-1) + fillet(1) + `<path class="arm" d="M ${ex} ${cy - R} A ${rho} ${rho} 0 0 1 ${ex} ${cy + R}"/>`;
+  }
+
+  // Parts to cut, tent pole: the ferrule is already fitted and is not part of the measurement.
+  function drawPartsPole(p, d) {
+    const n = d ? d.n : nOr4(p), dd = dec(p.step);
+    const rows = [{ name: 'Top section', qty: 1, len: d && d.top, kind: 'top' }];
+    if (n > 2) rows.push({ name: 'Middle section', qty: n - 2, len: d && d.mid, kind: 'mid' });
+    rows.push({ name: 'Bottom section', qty: 1, len: d && d.bot, kind: 'bot' });
+    const rel = { top: 1, mid: 0.87, bot: 0.79 };
+    const topLen = d ? d.top : 1;
+    const rowH = 104, pad = 8, W = 1000, H = pad * 2 + rows.length * rowH;
+    const o = svgOpen(W, H, 'Parts to cut: tube lengths, not including the ferrule');
+    let s = o.head;
+    const x0 = 250, maxW = 560, ferW = 90, hidW = 55;
+    rows.forEach((r, i) => {
+      const y = pad + i * rowH + 56;
+      const w = Math.max(200, maxW * (d ? r.len / topLen : rel[r.kind]));
+      const xe = x0 + w;
+      s += `<text class="t-b" x="16" y="${y + 2}">${r.name}</text>`;
+      s += `<text class="t-dk" x="16" y="${y + 22}">× ${r.qty}</text>`;
+      // dimension stops at the end of the tube
+      s += ext(x0, y - 40, y - 13) + ext(xe, y - 40, y - 13);
+      s += dimH(o.id, x0, xe, y - 30, `${f(r.len, dd)} mm`, 't-big');
+      s += `<rect class="tube" x="${x0}" y="${y - 11}" width="${w}" height="22" rx="2"/>`;
+      if (r.kind === 'top') {
+        s += `<text class="t-m" x="${xe + 12}" y="${y + 4}">no ferrule</text>`;
+      } else {
+        s += `<rect class="ferhid" x="${xe - hidW}" y="${y - 5}" width="${hidW}" height="10"/>`;
+        s += `<rect class="fer" x="${xe}" y="${y - 5}" width="${ferW}" height="10" rx="2"/>`;
+        s += `<text class="t-m" x="${xe + ferW}" y="${y + 36}" text-anchor="end">ferrule: already fitted, not included</text>`;
+      }
+      s += `<line class="cutline" x1="${x0}" y1="${y - 19}" x2="${x0}" y2="${y + 19}"/>`;
+      s += scissors(x0, y + 30);
+      s += `<text class="t-cut" x="${x0 + 14}" y="${y + 36}">cut here</text>`;
+      if (i < rows.length - 1) s += `<line class="ext" x1="16" y1="${y + 46}" x2="${W - 16}" y2="${y + 46}" style="stroke-dasharray:1 5"/>`;
+    });
+    return s + '</svg>';
+  }
+
+  // Narrow version for phones: one part per block, number above the bar, notes below.
+  function drawPartsNarrow(p, d) {
+    const n = d ? d.n : nOr4(p), dd = dec(p.step);
+    const rows = [{ name: 'Top section', qty: 1, len: d && d.top, kind: 'top' }];
+    if (n > 2) rows.push({ name: 'Middle section', qty: n - 2, len: d && d.mid, kind: 'mid' });
+    rows.push({ name: 'Bottom section', qty: 1, len: d && d.bot, kind: 'bot' });
+    if (p.diy) rows.push({ name: 'Ferrule', qty: n - 1, len: d && d.ferCut, kind: 'fer' });
+    const W = 320, rowH = 112, H = rows.length * rowH + 8;
+    const o = svgOpen(W, H, 'Parts to cut');
+    let s = o.head;
+    const x0 = 16, maxW = 200, ferW = 48, hidW = 30;
+    const topLen = d ? d.top : 1, rel = { top: 1, mid: 0.87, bot: 0.79 };
+    rows.forEach((r, i) => {
+      const y0 = i * rowH + 8;
+      s += `<text class="t-b" x="${x0}" y="${y0 + 16}">${r.name}</text><text class="t-dk" x="${W - 8}" y="${y0 + 16}" text-anchor="end">× ${r.qty}</text>`;
+      const y = y0 + 62;
+      if (r.kind === 'fer') {
+        const split = x0 + 120, fx1 = x0 + 200;
+        s += `<rect class="fer" x="${x0}" y="${y - 6}" width="${split - x0}" height="12" rx="2"/><rect class="ins" x="${split}" y="${y - 6}" width="${fx1 - split}" height="12" rx="2"/>`;
+        s += ext(x0, y - 34, y - 10) + ext(fx1, y - 34, y - 10);
+        s += dimH(o.id, x0, fx1, y - 24, `${f(r.len, dd)} mm cut`, 't-big');
+        s += `<text class="t-m" x="${x0}" y="${y + 26}">${trim(p.fer)} sticks out + ${trim(p.ins)} glued</text>`;
+      } else {
+        const w = Math.max(150, maxW * (d ? r.len / topLen : rel[r.kind]));
+        const xe = x0 + w;
+        s += ext(x0, y - 34, y - 12) + ext(xe, y - 34, y - 12);
+        s += dimH(o.id, x0, xe, y - 24, `${f(r.len, dd)} mm`, 't-big');
+        s += `<rect class="tube" x="${x0}" y="${y - 10}" width="${w}" height="20" rx="2"/>`;
+        if (!p.diy && r.kind !== 'top') {
+          s += `<rect class="ferhid" x="${xe - hidW}" y="${y - 5}" width="${hidW}" height="10"/><rect class="fer" x="${xe}" y="${y - 5}" width="${ferW}" height="10" rx="2"/>`;
+        }
+        s += `<line class="cutline" x1="${x0}" y1="${y - 17}" x2="${x0}" y2="${y + 17}"/>` + scissors(x0, y + 28);
+        s += `<text class="t-cut" x="${x0 + 14}" y="${y + 34}">cut here</text>`;
+        const note = p.diy ? '' : (r.kind === 'top' ? 'no ferrule' : 'ferrule already fitted, not included');
+        if (note) s += `<text class="t-m" x="${W - 8}" y="${y + 34}" text-anchor="end" style="font-size:11px">${note}</text>`;
+      }
+      if (i < rows.length - 1) s += `<line class="ext" x1="12" y1="${y0 + rowH - 4}" x2="${W - 12}" y2="${y0 + rowH - 4}" style="stroke-dasharray:1 5"/>`;
+    });
+    return s + '</svg>';
+  }
+
+  // Compact version for the printed sheet: name and qty on one line, labels beside the bar.
+  function drawPartsPrint(p, d) {
+    const n = d.n, dd = dec(p.step);
+    const rows = [{ name: 'Top section', qty: 1, len: d.top, kind: 'top' }];
+    if (n > 2) rows.push({ name: 'Middle section', qty: n - 2, len: d.mid, kind: 'mid' });
+    rows.push({ name: 'Bottom section', qty: 1, len: d.bot, kind: 'bot' });
+    if (p.diy) rows.push({ name: 'Ferrule', qty: n - 1, len: d.ferCut, kind: 'fer' });
+    const rowH = 74, W = 1000, H = rows.length * rowH + 10;
+    const o = svgOpen(W, H, 'Parts to cut');
+    let s = o.head;
+    const x0 = 350, maxW = 420, ferW = 70, hidW = 44;
+    rows.forEach((r, i) => {
+      const y = i * rowH + 50;
+      s += `<text class="t-b" x="16" y="${y + 6}" style="font-size:18px">${r.name} × ${r.qty}</text>`;
+      if (r.kind === 'fer') {
+        const split = x0 + 180, fx1 = x0 + 290;
+        s += `<rect class="fer" x="${x0}" y="${y - 6}" width="${split - x0}" height="12" rx="2"/><rect class="ins" x="${split}" y="${y - 6}" width="${fx1 - split}" height="12" rx="2"/>`;
+        s += ext(x0, y - 26, y - 8) + ext(fx1, y - 26, y - 8);
+        s += dimH(o.id, x0, fx1, y - 18, `${f(r.len, dd)} mm cut`, 't-big');
+        s += `<text class="t-m" x="${fx1 + 12}" y="${y + 5}">${trim(p.fer)} sticks out + ${trim(p.ins)} glued</text>`;
+        return;
+      }
+      const w = Math.max(200, maxW * r.len / d.top), xe = x0 + w;
+      s += ext(x0, y - 30, y - 12) + ext(xe, y - 30, y - 12);
+      s += dimH(o.id, x0, xe, y - 21, `${f(r.len, dd)} mm`, 't-big" style="font-size:23px;font-weight:700');
+      s += `<rect class="tube" x="${x0}" y="${y - 10}" width="${w}" height="20" rx="2"/>`;
+      s += `<line class="cutline" x1="${x0}" y1="${y - 13}" x2="${x0}" y2="${y + 13}"/>`;
+      s += scissors(x0 - 92, y) + `<text class="t-cut" x="${x0 - 80}" y="${y + 6}" style="font-size:15px">cut here</text>`;
+      if (p.diy) return;
+      if (r.kind === 'top') {
+        s += `<text class="t-m" x="${xe + 12}" y="${y + 6}" style="font-size:15px">no ferrule</text>`;
+      } else {
+        s += `<rect class="ferhid" x="${xe - hidW}" y="${y - 5}" width="${hidW}" height="10"/><rect class="fer" x="${xe}" y="${y - 5}" width="${ferW}" height="10" rx="2"/>`;
+        s += `<text class="t-m" x="${xe + ferW + 10}" y="${y + 6}" style="font-size:15px">ferrule fitted, not included</text>`;
+      }
+    });
+    return s + '</svg>';
+  }
+
+  // Parts to cut, home-made ferrules: tubes and ferrules are separate pieces.
+  function drawPartsDiy(p, d) {
+    const n = d ? d.n : nOr4(p), dd = dec(p.step);
+    const rows = [{ name: 'Top section', qty: 1, len: d && d.top, kind: 'tube' }];
+    if (n > 2) rows.push({ name: 'Middle section', qty: n - 2, len: d && d.mid, kind: 'tube' });
+    rows.push({ name: 'Bottom section', qty: 1, len: d && d.bot, kind: 'tube' });
+    rows.push({ name: 'Ferrule', qty: n - 1, len: d && d.ferCut, kind: 'fer' });
+    const rowH = 78, top = 16, W = 1000, H = top + rows.length * rowH + 6;
+    const o = svgOpen(W, H, 'Parts to cut, including home-made ferrules');
+    let s = o.head;
+    const x0 = 250, x1 = 960;
+    rows.forEach((r, i) => {
+      const y = top + i * rowH + 40;
+      s += `<text class="t-b" x="16" y="${y + 4}">${r.name}</text>`;
+      s += `<text class="t-dk" x="16" y="${y + 24}">× ${r.qty}</text>`;
+      if (r.kind === 'tube') {
+        s += `<rect class="tube" x="${x0}" y="${y - 8}" width="${x1 - x0}" height="20" rx="2"/>`;
+        s += ext(x0, y - 30, y - 10) + ext(x1, y - 30, y - 10);
+        s += dimH(o.id, x0, x1, y - 22, `${f(r.len, dd)} mm`, 't-dk');
+        s += `<text class="t-m" x="${x0}" y="${y + 30}">Ø${trim(p.tOD)} × ${trim(p.tID)}</text>`;
+      } else {
+        const fx0 = x0, split = x0 + 230, fx1 = x0 + 400;
+        if (p.mount === 'outside') {
+          s += `<rect class="sleeve" x="${fx0}" y="${y - 12}" width="${split - fx0}" height="28" rx="2"/>`;
+          s += `<rect class="ins" x="${split}" y="${y - 12}" width="${fx1 - split}" height="28" rx="2"/>`;
+        } else {
+          s += `<rect class="fer" x="${fx0}" y="${y - 5}" width="${split - fx0}" height="14" rx="2"/>`;
+          s += `<rect class="ins" x="${split}" y="${y - 5}" width="${fx1 - split}" height="14" rx="2"/>`;
+        }
+        s += ext(fx0, y - 32, y - 14) + ext(fx1, y - 32, y - 14);
+        s += dimH(o.id, fx0, fx1, y - 24, `${f(r.len, dd)} mm cut`, 't-dk');
+        s += `<text class="t-m" x="${(fx0 + split) / 2}" y="${y + 34}" text-anchor="middle">sticks out ${trim(p.fer)}</text>`;
+        s += `<text class="t-m" x="${(split + fx1) / 2}" y="${y + 34}" text-anchor="middle">glued ${trim(p.ins)}</text>`;
+        s += `<text class="t-m" x="${fx1 + 20}" y="${y + 6}">${ferSpec(p).short}</text>`;
+      }
+      if (i < rows.length - 1) s += `<line class="ext" x1="16" y1="${y + 44}" x2="${W - 16}" y2="${y + 44}" style="stroke-dasharray:1 5"/>`;
+    });
+    return s + '</svg>';
+  }
+
+  function drawUnfold(p, d) {
+    const n = d ? d.n : nOr4(p), dd = dec(p.step);
+    const W = 1000, H = 220, x1 = 980, capW = 44, y = 80, h = 22, c = h * 1.5;
+    const cy = y + h / 2, xc = 20 + c + 4, xt = xc + 30;
+    const o = svgOpen(W, H, 'Assembled stand');
+    let s = o.head;
+    const tw = (x1 - capW - xt) / n;
+    const lens = d ? [d.top, ...Array(n - 2).fill(d.mid), d.bot] : Array(n).fill(null);
+    s += `<text class="t-h" x="20" y="22">Bike end</text><text class="t-h" x="${x1}" y="22" text-anchor="end">Ground end</text>`;
+    for (let i = 0; i < n; i++) {
+      const tx = xt + i * tw;
+      s += `<rect class="tube" x="${tx}" y="${y}" width="${tw}" height="${h}"/>`;
+      s += `<text class="t-b" x="${tx + tw / 2}" y="${y - 12}" text-anchor="middle" style="font-size:13px">${tubeName(i, n)}</text>`;
+      s += `<text class="t-d" x="${tx + tw / 2}" y="${y + h + 20}" text-anchor="middle">${f(lens[i], dd)}</text>`;
+    }
+    for (let j = 1; j < n; j++) {
+      const jx = xt + j * tw;
+      const ex = Math.min(tw * 0.42, 50), ix = Math.min(tw * 0.3, 34);
+      if (p.mount === 'outside') s += `<rect class="sleeve" x="${jx - ex}" y="${y - 4}" width="${ex + ix}" height="${h + 8}" rx="2"/>`;
+      else s += `<rect class="ferhid" x="${jx - ex}" y="${y + 6}" width="${ex + ix}" height="${h - 12}"/>`;
+      s += `<line x1="${jx}" y1="${y}" x2="${jx}" y2="${y + h}" stroke="var(--alu-edge)" stroke-width="1.4"/>`;
+    }
+    s += headSVG(xc, xt, cy, c, h);
+    s += `<text class="t-m" x="${(xc + xt) / 2}" y="${cy + c + 18}" text-anchor="middle">+${trim(p.head)}</text>`;
+    s += `<rect class="rubber" x="${x1 - capW}" y="${y - 5}" width="${capW}" height="${h + 10}" rx="10"/>`;
+    s += `<text class="t-m" x="${x1 - capW / 2}" y="${y + h + 20}" text-anchor="middle">+${trim(p.foot)}</text>`;
+    const dy = y + h + 78;
+    s += ext(xc, cy, dy + 6) + ext(x1, y + h + 30, dy + 6);
+    s += dimH(o.id, xc, x1, dy, `Stand length ${d ? f(d.assembled, dd) : '—'} mm`, 't-dk');
+    return s + '</svg>';
+  }
+
+  function drawFold(p, d, compact) {
+    const n = d ? d.n : nOr4(p), dd = dec(p.step);
+    // compact (print): the middle sections are identical, so draw one row labelled "Middle × k"
+    const items = compact ? [0, ...(n > 2 ? [1] : []), n - 1] : [...Array(n).keys()];
+    const W = 1000, lx = 16, rh = 22, c = rh * 1.5, xd = 200 + c + 4, x1 = 960, capW = 44, fe = 120, insW = 70, gap = 26, top = 62 + (c - rh / 2);
+    const rowY = (i) => top + i * (rh + gap) + (i > 0 ? c - rh / 2 : 0);
+    const H = rowY(items.length - 1) + rh + 12;
+    const o = svgOpen(W, H, 'Folded sections');
+    let s = o.head;
+    s += ext(xd, 30, top - 30) + ext(x1, 30, top - 6);
+    s += dimH(o.id, xd, x1, 36, `Folded length ${d ? f(d.F, dd) : '—'} mm`, 't-dk');
+    items.forEach((i, row) => {
+      const y = rowY(row);
+      const isTop = i === 0, isBot = i === n - 1;
+      let sec = null, parts = '';
+      if (isTop) { sec = d && d.secTop; parts = `${trim(p.head)} + ${d ? f(d.top, dd) : '—'}`; }
+      else if (isBot) { sec = d && d.secBot; parts = `${trim(p.foot)} + ${d ? f(d.bot, dd) : '—'} + ${trim(p.fer)}`; }
+      else { sec = d && d.secMid; parts = `${d ? f(d.mid, dd) : '—'} + ${trim(p.fer)}`; }
+      s += `<text class="t-b" x="${lx}" y="${y + 9}">${compact && !isTop && !isBot ? `Middle × ${n - 2}` : tubeName(i, n)}</text>`;
+      s += `<text class="t-m" x="${lx}" y="${y + 26}" style="font-family:var(--f-data)">${parts} = ${d ? f(sec, dd) : '—'}</text>`;
+      let tx0 = xd, tx1 = x1;
+      if (isTop || isBot) tx0 = xd + capW;
+      if (!isTop) tx1 = x1 - fe;
+      s += `<rect class="tube" x="${tx0}" y="${y}" width="${tx1 - tx0}" height="${rh}"/>`;
+      if (!isTop) {
+        if (p.mount === 'outside') {
+          s += `<rect class="sleeve" x="${tx1 - insW}" y="${y - 5}" width="${fe + insW}" height="${rh + 10}" rx="2"/>`;
+          s += `<line x1="${tx1}" y1="${y - 5}" x2="${tx1}" y2="${y + rh + 5}" stroke="var(--fer-edge)" stroke-dasharray="3 3"/>`;
+        } else {
+          s += `<rect class="ferhid" x="${tx1 - insW}" y="${y + 5}" width="${insW}" height="${rh - 10}"/>`;
+          s += `<rect class="fer" x="${tx1}" y="${y + 5}" width="${fe}" height="${rh - 10}" rx="2"/>`;
+        }
+      }
+      if (isTop) s += headSVG(xd, xd + capW, y + rh / 2, c, rh);
+      if (isBot) s += `<rect class="rubber" x="${xd}" y="${y - 3}" width="${capW}" height="${rh + 6}" rx="9"/>`;
+    });
+    return s + '</svg>';
+  }
+
+  function ferSpec(p) {
+    return p.mount === 'outside'
+      ? { short: `sleeve, bore Ø${trim(p.tOD)}`, long: `Fits over the tube: bore Ø${trim(p.tOD)} (= tube outer diameter)` }
+      : { short: `Ø${trim(p.tID)} outer`, long: `Fits inside the tube: Ø${trim(p.tID)} outer (= tube inner diameter)` };
+  }
+
+  function drawJoint(p) {
+    const W = 1000, H = 250;
+    const o = svgOpen(W, H, 'Joint detail');
+    let s = o.head;
+    const cy = 112, ro = 50, ri = 38;
+    const xa = 40, xj = 520, xb = 960;
+    const wall = (x1, x2, r1, r2, cls) => `<rect class="${cls}" x="${x1}" y="${cy - r1}" width="${x2 - x1}" height="${r1 - r2}"/><rect class="${cls}" x="${x1}" y="${cy + r2}" width="${x2 - x1}" height="${r1 - r2}"/>`;
+    s += `<text class="t-h" x="${xa}" y="26">Upper section, open end</text><text class="t-h" x="${xb}" y="26" text-anchor="end">Lower section, ferrule end</text>`;
+    s += wall(xa, xj - 2, ro, ri, 'wall') + wall(xj + 2, xb, ro, ri, 'wall');
+    const exX = 290, inX = 700;
+    if (p.mount === 'outside') {
+      const so = ro + 12;
+      s += wall(exX, inX, so, ro, 'ferwall');
+      s += `<text class="t-dk" x="${(exX + inX) / 2}" y="${cy - so - 10}" text-anchor="middle">Ferrule over the tube, bore Ø${trim(p.tOD)}</text>`;
+    } else {
+      s += wall(exX, inX, ri, ri - 10, 'ferwall');
+      s += `<text class="t-dk" x="${(exX + inX) / 2}" y="${cy - ro - 12}" text-anchor="middle">Ferrule Ø${trim(p.tID)} inside the tube</text>`;
+    }
+    s += `<line class="cl" x1="20" y1="${cy}" x2="980" y2="${cy}"/>`;
+    s += `<path class="cord" d="M ${xa} ${cy + 4} C 300 ${cy - 6}, 700 ${cy + 8}, ${xb} ${cy - 2}"/>`;
+    s += `<text class="t-m" x="${xb - 6}" y="${cy + 18}" text-anchor="end">shock cord</text>`;
+    s += `<text class="t-d" x="${xa + 6}" y="${cy + ro + 22}">Tube Ø${trim(p.tOD)} × ${trim(p.tID)}  (wall ${isFinite(p.tOD - p.tID) ? trim((p.tOD - p.tID) / 2) : '—'})</text>`;
+    const dy = cy + ro + 56;
+    s += ext(exX, cy + ro + 2, dy + 6) + ext(xj, cy + ro + 2, dy + 6) + ext(inX, cy + ro + 2, dy + 6);
+    s += dimH(o.id, exX, xj, dy, `sticks out ${trim(p.fer)}`);
+    s += dimH(o.id, xj, inX, dy, `glued ${trim(p.ins)}`);
+    return s + '</svg>';
+  }
+
+  // ---------- cut list ----------
+  const TUBE_ONLY_POLE = '<b>Cut lengths are the tube only.</b> They don’t include the ferrule that sticks out.';
+  const TUBE_ONLY_DIY = '<b>Cut lengths are the tube only.</b> The ferrules are separate pieces, listed on their own row.';
+  const tubeOnlyText = (p) => (p.diy ? TUBE_ONLY_DIY : TUBE_ONLY_POLE).replace(/<\/?b>/g, '');
+
+  // where: 'screen', 'paper' (print sheet) or 'text' (copied cut list)
+  function cutRows(p, d, where) {
+    const hf = { part: 'Head and foot', qty: 2, cut: null, sec: null, note: `1 head and 1 foot, 3D-printed. ${where === 'paper' ? 'Scan the QR code for the files.' : where === 'text' ? 'See the link below.' : 'See the Printables button below.'}` };
+    const out = [];
+    if (!p.diy) {
+      out.push({ part: 'Top section', qty: 1, cut: d.top, sec: d.secTop, note: '<b>No ferrule</b> · the head goes on the top end.' });
+      if (d.mids > 0) out.push({ part: 'Middle section', qty: d.mids, cut: d.mid, sec: d.secMid, note: '<b>Keep ferrule</b> · cut from the open end.' });
+      out.push({ part: 'Bottom section', qty: 1, cut: d.bot, sec: d.secBot, note: '<b>Keep ferrule</b> · cut from the open end. The foot goes on the cut end.' });
+      out.push(hf);
+      out.push({ part: 'Shock cord', qty: 1, cut: null, sec: null, note: 'Thread the cord through the head, sections and foot. Set the tension, then cut it.' });
+    } else {
+      out.push({ part: 'Top section', qty: 1, cut: d.top, sec: d.secTop, note: '<b>Plain tube</b> · the head goes in the top end; the bottom end stays open.' });
+      if (d.mids > 0) out.push({ part: 'Middle section', qty: d.mids, cut: d.mid, sec: d.secMid, note: '<b>Glue a ferrule</b> into the top end. The bottom end stays open.' });
+      out.push({ part: 'Bottom section', qty: 1, cut: d.bot, sec: d.secBot, note: '<b>Glue a ferrule</b> into the top end. The foot goes on the bottom end.' });
+      out.push({ part: 'Ferrule', qty: d.ferQty, cut: d.ferCut, sec: null, note: `${trim(p.fer)} sticks out + ${trim(p.ins)} glued. ${ferSpec(p).long}.` });
+      out.push(hf);
+      out.push({ part: 'Shock cord', qty: 1, cut: null, sec: null, note: `About ${Math.round(d.cordLo)}–${Math.round(d.cordHi)} mm. Thread it through the head, sections and foot; set the tension, then cut it.` });
+    }
+    return out;
+  }
+  function cutCardsHTML(p, d) {
+    const dd = dec(p.step);
+    return cutRows(p, d, 'screen').map(r => `<div class="cutcard"><div class="cn">${r.part}</div><div class="cl">${r.cut != null ? `${f(r.cut, dd)}<small>mm</small>` : ''}</div><div class="cq">× ${r.qty}</div><div class="cnote">${r.note}</div></div>`).join('');
+  }
+  function cutTableHTML(p, d, withTick) {
+    const dd = dec(p.step);
+    let h = `<thead><tr>${withTick ? '<th class="tick">Done</th>' : ''}<th>Part</th><th class="q">Qty</th><th class="mm">Cut tube to</th><th class="mm">Folded length</th><th>Notes</th></tr></thead><tbody>`;
+    cutRows(p, d, withTick ? 'paper' : 'screen').forEach(r => {
+      h += `<tr>${withTick ? '<td class="tick">☐</td>' : ''}<td><b>${r.part}</b></td><td class="q">${r.qty}</td><td class="mm${r.cut != null ? ' big' : ''}">${r.cut != null ? f(r.cut, dd) : '—'}</td><td class="mm">${r.sec != null ? f(r.sec, dd) : ''}</td><td><span class="note">${r.note}</span></td></tr>`;
+    });
+    return h + '</tbody>';
+  }
+  function stockHTML(p, d) {
+    const dd = dec(p.step);
+    return `<div><div class="k">Tube stock</div><div class="v">${Math.ceil(d.tubeStock)} mm</div><div class="n">${f(d.tubeTotal, dd)} of tube + ${d.n} cuts × ${trim(p.kerf)} kerf</div></div>
+      <div><div class="k">Ferrule stock</div><div class="v">${Math.ceil(d.ferStock)} mm</div><div class="n">${d.ferQty} × ${trim(d.ferCut)} + ${d.ferQty} cuts × ${trim(p.kerf)} kerf</div></div>`;
+  }
+  function cmpHTML(p) {
+    const dd = 0; // whole mm: this table is for choosing the number of sections
+    let h = `<thead><tr><th class="q">Sections</th><th class="mm">Folded</th><th class="mm hm">Top</th><th class="mm hm">Middle</th><th class="mm hm">Bottom</th><th class="q">Ferrules</th><th>Status</th></tr></thead><tbody>`;
+    for (let k = 2; k <= 8; k++) {
+      const c = checkN(p, k), s = c.s;
+      const chip = c.tooShort ? '<span class="chip bad">Too short</span>'
+        : c.tooLong ? '<span class="chip bad">Too long</span>'
+        : c.clash ? '<span class="chip bad">Ferrules clash</span>'
+        : c.topLong ? '<span class="chip warn">Pole too short</span>'
+        : '<span class="chip ok">Works</span>';
+      h += `<tr class="pick${k === p.n ? ' cur' : ''}" data-n="${k}" tabindex="0"><td class="q">${k}</td><td class="mm">${f(s.F, dd)}</td><td class="mm hm">${f(s.top, dd)}</td><td class="mm hm">${k > 2 ? f(s.mid, dd) : '—'}</td><td class="mm hm">${f(s.bot, dd)}</td><td class="q">${k - 1}</td><td>${chip}</td></tr>`;
+    }
+    return h + '</tbody>';
+  }
+  function formulaText(p, d) {
+    const n = d.n, r = (x) => x.toFixed(1);
+    return `Stand length L = contact height ÷ cos(stand angle)
+                = ${trim(p.bike)} ÷ cos ${trim(p.angle)}° = ${r(d.L)}
+
+Every piece folds to the same length F, so each tube is F minus
+whatever sticks out of it (head, ferrule or foot).
+
+F = (L + (n − 1) × ferrule) ÷ n = (${r(d.L)} + ${n - 1} × ${trim(p.fer)}) ÷ ${n} = ${r(d.F)}
+
+Top section     = F − head             = ${r(d.F)} − ${trim(p.head)} = ${r(d.raw.top)}
+${n > 2 ? `Middle section  = F − ferrule          = ${r(d.F)} − ${trim(p.fer)} = ${r(d.raw.mid)}\n` : ''}Bottom section  = F − foot − ferrule   = ${r(d.F)} − ${trim(p.foot)} − ${trim(p.fer)} = ${r(d.raw.bot)}
+
+The ferrules slide inside the section above, so they add nothing
+to the stand length: head + all tubes + foot = L.
+
+Checks
+  every tube ≥ ferrule + 10 = ${trim(p.fer + 10)} mm (room to hold the ferrule)
+  middle sections ≥ ferrule depth + ferrule = ${trim(p.ins + p.fer)} mm (room for both ferrules)${p.diy ? '' : `\n  middle and bottom ≤ one pole section = ${trim(p.secLen)} mm (the top can use a longer plain tube)`}`;
+  }
+
+  // ---------- QR code (print sheet only) ----------
+  // Black modules on white with a 4-module quiet zone, error correction M. Built from PRINTABLES_URL.
+  function qrSVG(text) {
+    if (typeof qrcode !== 'function') return '';
+    const q = qrcode(0, 'M');
+    q.addData(text); q.make();
+    const n = q.getModuleCount(), m = 4, size = n + 2 * m;
+    let d = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c + m} ${r + m}h1v1h-1z`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges" role="img" aria-label="QR code for the 3D-printed head and foot"><rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+  }
+
+  // ---------- print sheet ----------
+  // Short names used in the calculator link. Values equal to the defaults are left out.
+  const LINK_KEYS = { h: 'bike', n: 'n', a: 'angle', sec: 'secLen', fer: 'fer', dep: 'ins', hd: 'head', ft: 'foot', od: 'tOD', id: 'tID', kerf: 'kerf' };
+  function calcLink(p, d) {
+    if (!CALCULATOR_URL) return '';
+    const q = new URLSearchParams({ h: trim(p.bike), n: String(d.n) });
+    Object.entries(LINK_KEYS).forEach(([k, key]) => {
+      if (k === 'h' || k === 'n') return;
+      if (!p.diy && ['od', 'id', 'kerf'].includes(k)) return;
+      if (Math.abs(p[key] - DEFAULTS[key]) > EPS) q.set(k, trim(p[key]));
+    });
+    if (String(p.step) !== DEFAULTS.round) q.set('rnd', String(p.step));
+    if (p.diy) { q.set('diy', '1'); if (p.mount === 'outside') q.set('fit', 'over'); }
+    return CALCULATOR_URL + (CALCULATOR_URL.includes('?') ? '&' : '?') + q.toString();
+  }
+  function sheetBody(p, d) {
+    const dd = dec(p.step);
+    const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const qr = (url, label) => `<figure class="ps-qrc">${qrSVG(url)}<figcaption>${label}</figcaption></figure>`;
+    const calc = calcLink(p, d);
+    return `<div class="ps">
+      <div class="ps-head">
+        <div class="ps-title"><h1>Stick Stand · Cut Sheet</h1><div class="ps-tag">The folding bike stand</div><div class="ps-date">${today} · All dimensions in mm</div></div>
+        <div class="ps-qrs">${qr(PRINTABLES_URL, '3D files')}${calc ? qr(calc, 'Calculator') : ''}</div>
+      </div>
+      <table class="ps-in"><tr><td>Contact height<b>${trim(p.bike)} mm</b></td><td class="hl">Folded length<b>${f(d.F, dd)} mm</b></td><td>Stand length<b>${f(d.assembled, dd)} mm</b></td><td>Sections<b>${d.n}</b></td></tr></table>
+      <p class="ps-call">${p.diy ? TUBE_ONLY_DIY : TUBE_ONLY_POLE}</p>
+      <p class="ps-brake"><b>Safety:</b> hold the front brake on when using the stand.</p>
+      <table class="ps-cut">${cutTableHTML(p, d, true)}</table>
+      ${p.diy ? `<div class="stock">${stockHTML(p, d)}</div>` : ''}
+      <h2>Parts to cut</h2><div class="drawing">${drawPartsPrint(p, d)}</div>
+      <h2>Folded</h2><div class="drawing">${drawFold(p, d, true)}</div>
+    </div>`;
+  }
+  const PRINT_CSS = `
+    .ps{font:12px/1.4 "Barlow","Segoe UI",system-ui,sans-serif;color:#000}
+    .ps,.ps *{color:#000 !important}
+    .ps{padding:12mm}
+    .ps-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:8px}
+    .ps h1{font:700 22px/1 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;margin:0}
+    .ps h2{font:700 12px/1 "Barlow Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.08em;margin:10px 0 5px}
+    .ps-sub{font:11px "IBM Plex Mono",monospace;margin-top:4px}.ps-tag{font:600 10px "Barlow",sans-serif;text-transform:uppercase;letter-spacing:.12em;margin-top:3px}.ps-date{font:10px "IBM Plex Mono",monospace;margin-top:4px}
+    .ps-qrs{display:flex;gap:8px}
+    .ps-qrc{margin:0;text-align:center}.ps-qrc svg{width:20mm;height:20mm;display:block}
+    .ps-qrc figcaption{font:600 9px "Barlow","Segoe UI",sans-serif;margin-top:1px}
+    .ps table{width:100%;border-collapse:collapse;margin-bottom:8px}
+    .ps table{font-size:12px}
+    .ps th,.ps td{border:1px solid #999;padding:4px 6px;text-align:left;vertical-align:top}
+    .ps .ps-cut td:nth-child(2) b{font-size:12px}
+    .ps .note b{font-size:10px}
+    .ps th{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;background:#eee}
+    .ps .ps-in td{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;width:25%;padding:6px 8px}.ps .ps-in b{display:block;font:500 16px "IBM Plex Mono",monospace;text-transform:none;letter-spacing:0;margin-top:2px}
+    .ps .ps-in td.hl{background:#eee;border-width:1.5px;border-color:#000}
+    .ps td.mm,.ps th.mm,.ps td.q,.ps th.q{text-align:right;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
+    .ps td.mm.big{font-weight:700;font-size:13px}
+    .ps .tick{width:1%;text-align:center}
+    .ps .ps-cut td:nth-child(2){white-space:nowrap;width:1%}
+    .ps .ps-cut td:nth-child(3){width:1%}
+    .ps .note{font-size:10px}
+    .ps .ps-call{border:1.5px solid #000;padding:5px 8px;margin:0 0 4px}
+    .ps .ps-brake{font-size:10.5px;margin:0 0 8px}
+    .ps .stock{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .ps .stock>div{border:1px solid #999;padding:5px 8px}.ps .stock .k{font-size:9.5px;text-transform:uppercase}
+    .ps .stock .v{font:500 13px "IBM Plex Mono",monospace}.ps .stock .n{font-size:9.5px}
+    .ps .drawing{border:1px solid #999;page-break-inside:avoid}.ps .drawing svg{width:100%;min-width:0;height:auto;display:block}
+    .ps .sv text{fill:#000 !important}
+    .ps .sv .scis,.ps .sv .cutline{stroke:#000}
+    .ps .sv .ferhid,.ps .sv .ins{stroke:#555}
+    .ps-note{font-size:9.5px;margin:6px 0 0}
+    @page{size:A4;margin:12mm}
+    @page :first{margin:0}`;
+  const LIGHT_VARS = `:root{--paper:#fff;--panel:#fff;--ink:#000;--muted:#444;--line:#999;--alu:#e2c06a;--alu-edge:#7a5a14;--fer:#c4cad2;--fer-edge:#555;--fer-soft:#eef0f3;--rubber:#8a8f96;--cord:#9a9a9a;--dykem:#7a5a14;--dykem-soft:#f6ecd2;--warn:#9a5b00;--f-body:"Barlow","Segoe UI",sans-serif;--f-data:"IBM Plex Mono",monospace;--f-display:"Barlow Condensed","Arial Narrow",sans-serif}`;
+  function printDoc(p, d) {
+    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stick Stand cut sheet · ${d.n} sections</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>${LIGHT_VARS}body{margin:0;padding:0;background:#fff}${$('svgcss').textContent}${PRINT_CSS}</style></head>
+<body>${sheetBody(p, d)}<script>window.addEventListener('load',function(){setTimeout(function(){window.print()},400)});<\/script></body></html>`;
+  }
+  function plainText(p, d) {
+    const dd = dec(p.step);
+    const lines = [`Stick Stand cut list: ${d.n} sections, folds to ${f(d.F, dd)} mm, stand length ${f(d.assembled, dd)} mm`, tubeOnlyText(p), ''];
+    cutRows(p, d, 'text').forEach(r => {
+      const qty = String(r.qty).padEnd(5);
+      lines.push(`${r.part.padEnd(15)} ×${qty} ${r.cut != null ? (f(r.cut, dd) + ' mm').padStart(9) : ' '.repeat(9)}   ${r.note.replace(/<\/?b>/g, '')}`);
+    });
+    if (p.diy) lines.push('', `Tube stock: ${Math.ceil(d.tubeStock)} mm · Ferrule stock: ${Math.ceil(d.ferStock)} mm`);
+    lines.push('', 'Hold the front brake on when using the stand.', `3D files for the head and foot: ${PRINTABLES_URL}`);
+    const calc = calcLink(p, d);
+    if (calc) lines.push(`Calculator: ${calc}`);
+    return lines.join('\n');
+  }
+
+  // ---------- render ----------
+  let current = null;
+  function render() {
+    const p = read();
+    const v = validate(p);
+    const dd = dec(isNaN(p.step) ? 0.1 : p.step);
+    NUM_KEYS.forEach(k => $(k).setAttribute('aria-invalid', v.bad.has(k) ? 'true' : 'false'));
+    if (ADV_KEYS.some(k => v.bad.has(k))) $('adv').open = true;
+
+    // mode
+    $('diyBox').hidden = !p.diy;
+    $('secLenField').hidden = p.diy;
+    $('poleLegend').textContent = p.diy ? 'Ferrule' : 'Tent pole';
+    $('insLbl').textContent = p.diy ? 'Glued length' : 'How deep the ferrule goes into its tube';
+    $('insHelp').textContent = p.diy
+      ? 'The part glued into its own tube. It doesn’t change the tube lengths.'
+      : 'Push a thin rod into the open end of a section until it hits the ferrule. Used to check that middle sections can hold both ferrules.';
+    $('jointWrap').hidden = !p.diy;
+    $('mountHelp').textContent = p.mount === 'outside'
+      ? `The ferrule fits over the tube, so its inner diameter matches the tube's outer diameter (${trim(p.tOD)} mm).`
+      : `The ferrule fits inside the tube, so its outer diameter matches the tube's inner diameter (${trim(p.tID)} mm).`;
+    const okAngle = !isNaN(p.angle) && p.angle >= 0 && p.angle <= 45;
+    $('angleOut').textContent = okAngle ? (isNaN(p.bike) ? `Adds ${((p.ratio - 1) * 100).toFixed(1)} % to the contact height` : `Adds +${f(p.lean, dd)} mm`) : '';
+
+    const ok = !v.empty && v.errs.length === 0;
+    const d = ok ? build(p) : null;
+    current = ok ? { p, d } : null;
+
+    const all = [...v.errs.map(m => ['err', m]), ...v.warns.map(m => ['warn', m])];
+    const fixes = {};
+    $('msgs').innerHTML = all.map(([c, m], i) => {
+      if (m.fix) fixes[`${c}-${i}`] = m.fix.set;
+      return `<div class="msg ${c}"><span>${m.msg}</span>${m.fix ? `<button type="button" class="fix" data-i="${c}-${i}">${m.fix.label}</button>` : ''}</div>`;
+    }).join('');
+    $('msgs').querySelectorAll('.fix').forEach(b => b.addEventListener('click', () => {
+      const set = fixes[b.dataset.i];
+      Object.keys(set).forEach(k => { $(k).value = set[k]; });
+      save(); render();
+    }));
+
+    const nShow = Number.isInteger(p.n) ? p.n : '—';
+    $('summary').innerHTML = `
+      <div><div class="k">Folded length</div><div class="v">${d ? f(d.F, dd) : '—'}<small>mm</small></div><div class="n">every section</div></div>
+      <div><div class="k">Stand length</div><div class="v">${d ? f(d.assembled, dd) : '—'}<small>mm</small></div><div class="n">${d ? `contact height ${trim(p.bike)} + ${f(d.assembled - p.bike, dd)} for the angle` : 'contact height + angle'}</div></div>
+      <div><div class="k">Sections</div><div class="v">${nShow}</div><div class="n">${Number.isInteger(p.n) ? `${p.n - 1} joints` : '&nbsp;'}</div></div>
+      ${p.diy
+        ? `<div><div class="k">Tube needed</div><div class="v">${d ? Math.ceil(d.tubeStock) : '—'}<small>mm</small></div><div class="n">including saw cuts</div></div>`
+        : `<div><div class="k">Longest cut</div><div class="v">${d ? f(d.top, dd) : '—'}<small>mm</small></div><div class="n">of a ${isNaN(p.secLen) ? '—' : trim(p.secLen)} mm section</div></div>`}`;
+
+    $('tubeOnly').innerHTML = p.diy ? TUBE_ONLY_DIY : TUBE_ONLY_POLE;
+    $('cutCard').hidden = !ok;
+    $('cutPrompt').hidden = ok;
+    $('cutPrompt').textContent = v.empty ? 'Enter your contact height above to see your cut list.' : 'Fix the problem above to see your cut list.';
+    if (ok) {
+      $('cutTable').innerHTML = cutTableHTML(p, d, false);
+      $('stock').innerHTML = p.diy ? stockHTML(p, d) : '';
+      $('stock').hidden = !p.diy;
+      $('dParts').innerHTML = p.diy ? drawPartsDiy(p, d) : drawPartsPole(p, d);
+      $('dPartsN').innerHTML = drawPartsNarrow(p, d);
+      $('cutCards').innerHTML = cutCardsHTML(p, d);
+      $('formula').textContent = formulaText(p, d);
+    } else {
+      $('formula').textContent = 'Enter a valid contact height to see the working.';
+    }
+    $('dFold').innerHTML = drawFold(p, d);
+    $('dUnfold').innerHTML = drawUnfold(p, d);
+    if (p.diy) $('dJoint').innerHTML = drawJoint(p);
+
+    const canCmp = !v.empty && p.bike >= 300 && okAngle && p.fer >= 10 && p.head >= 0 && p.foot >= 0 && (p.diy || p.secLen > 0);
+    $('cmpTable').innerHTML = canCmp ? cmpHTML(p) : '<tbody><tr><td style="color:var(--muted)">Appears once the contact height is entered.</td></tr></tbody>';
+    $('cmpTable').querySelectorAll('tr.pick').forEach(tr => {
+      const pick = () => { $('n').value = tr.dataset.n; save(); render(); };
+      tr.addEventListener('click', pick);
+      tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+    });
+    $('printSheet').innerHTML = ok ? `<style>${PRINT_CSS}</style>` + sheetBody(p, d) : '';
+  }
+
+  // ---------- events ----------
+  NUM_KEYS.forEach(k => $(k).addEventListener('input', () => { save(); render(); }));
+  $('round').addEventListener('change', () => { save(); render(); });
+  $('diy').addEventListener('change', () => { save(); render(); });
+  document.querySelectorAll('input[name=mount]').forEach(r => r.addEventListener('change', () => { save(); render(); }));
+  const bumpN = (dlt) => { const cur = parseInt($('n').value, 10); $('n').value = Math.min(8, Math.max(2, (isNaN(cur) ? 4 : cur) + dlt)); save(); render(); };
+  $('nDown').addEventListener('click', () => bumpN(-1));
+  $('nUp').addEventListener('click', () => bumpN(1));
+  $('reset').addEventListener('click', () => {
+    const bike = $('bike').value;
+    try { localStorage.removeItem(STORE); } catch (e) { /* storage not available */ }
+    load(); $('bike').value = bike; save(); render();
+  });
+
+  let downloads = null;
+  const hint = (t) => { $('actHint').textContent = t; };
+  if (window.claude && typeof window.claude.use === 'function') {
+    window.claude.use('downloads').then(ns => { downloads = ns; }).catch(() => { downloads = null; });
+  }
+  $('printBtn').addEventListener('click', async () => {
+    if (!current) return;
+    const { p, d } = current;
+    if (downloads) {
+      try {
+        await downloads.save({ filename: `stick-stand-cut-sheet-${d.n}-sections.html`, data: printDoc(p, d) });
+        hint('Saved. Open the file and it goes straight to the print dialog.');
+      } catch (e) {
+        if (e && e.code === 'declined') hint('Not saved.');
+        else if (e && e.code === 'rate_limited') hint('A save is already waiting for your answer.');
+        else hint('Printing isn’t available here. Use “Copy cut list” instead.');
+      }
+    } else {
+      window.print();
+    }
+  });
+  $('copyBtn').addEventListener('click', () => {
+    if (!current) return;
+    const txt = plainText(current.p, current.d);
+    const fallback = () => {
+      const ta = document.createElement('textarea');
+      ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      let copied = false; try { copied = document.execCommand('copy'); } catch (e) { copied = false; }
+      ta.remove();
+      hint(copied ? 'Copied.' : 'Couldn’t copy here.');
+    };
+    try { navigator.clipboard.writeText(txt).then(() => hint('Copied.'), fallback); } catch (e) { fallback(); }
+  });
+
+  // bike-type tabs in the measuring guide
+  const tabs = [['tabClassic', 'panClassic'], ['tabMtb', 'panMtb']];
+  const pickTab = (id) => tabs.forEach(([t, pnl]) => {
+    const on = t === id;
+    $(t).setAttribute('aria-selected', on ? 'true' : 'false');
+    $(t).tabIndex = on ? 0 : -1;
+    $(pnl).hidden = !on;
+  });
+  tabs.forEach(([t], i) => {
+    $(t).addEventListener('click', () => pickTab(t));
+    $(t).addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const nt = tabs[(i + 1) % 2][0]; pickTab(nt); $(nt).focus(); }
+    });
+  });
+
+  load();
+  try {
+    const q = new URLSearchParams(location.search);
+    if ([...q.keys()].length) {
+      NUM_KEYS.forEach(k => { $(k).value = DEFAULTS[k]; });
+      $('round').value = DEFAULTS.round; $('diy').checked = false; $('mountIn').checked = true;
+      Object.entries(LINK_KEYS).forEach(([k, key]) => {
+        const v = parseFloat(q.get(k));
+        if (q.has(k) && isFinite(v) && v >= 0) $(key).value = key === 'n' ? Math.round(v) : v;
+      });
+      if (['0.1', '0.5', '1'].includes(q.get('rnd'))) $('round').value = q.get('rnd');
+      if (q.get('diy') === '1') $('diy').checked = true;
+      if (q.get('fit') === 'over') $('mountOut').checked = true;
+      save();
+    }
+  } catch (e) { /* no address parameters */ }
+  render();
+})();
+</script>
+
+</body></html>
